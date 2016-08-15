@@ -1,0 +1,20 @@
+{
+  "name": "js13k-2016",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/razh/js13k-2016.git"
+  },
+  "author": "razh",
+  "private": true,
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/razh/js13k-2016/issues"
+  },
+  "homepage": "https://github.com/razh/js13k-2016#readme"
+}
