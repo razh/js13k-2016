@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "gulp": "gulp",
     "test": "test"
   },
   "repository": {
@@ -16,5 +17,19 @@
   "bugs": {
     "url": "https://github.com/razh/js13k-2016/issues"
   },
-  "homepage": "https://github.com/razh/js13k-2016#readme"
+  "homepage": "https://github.com/razh/js13k-2016#readme",
+  "devDependencies": {
+    "browser-sync": "2.14.0",
+    "del": "2.2.2",
+    "eslint": "3.3.1",
+    "gulp": "3.9.1",
+    "gulp-htmlmin": "2.0.0",
+    "gulp-if": "2.0.1",
+    "gulp-load-plugins": "1.2.4",
+    "gulp-size": "2.1.0",
+    "gulp-uglify": "2.0.0",
+    "gulp-zip": "3.2.0",
+    "rollup": "0.34.8",
+    "run-sequence": "1.2.2"
+  }
 }
