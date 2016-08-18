@@ -1,3 +1,1 @@
-// @flow
-
-export type Material = {};
+export function material_create() {}
