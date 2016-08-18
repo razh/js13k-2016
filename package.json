@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "gulp": "gulp",
+    "lint": "eslint src",
     "test": "test"
   },
   "repository": {
@@ -29,7 +30,7 @@
     "gulp-size": "2.1.0",
     "gulp-uglify": "2.0.0",
     "gulp-zip": "3.2.0",
-    "rollup": "0.34.8",
+    "rollup": "0.34.10",
     "run-sequence": "1.2.2"
   }
 }
