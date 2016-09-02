@@ -20,7 +20,9 @@ module.exports = {
     Uint8ClampedArray: false,
   },
   rules: {
+    'array-bracket-spacing': ['error', 'never'],
     'comma-dangle': ['error', 'always-multiline'],
+     indent: ['error', 2],
     'no-multi-spaces': 'error',
     'object-curly-spacing': ['error', 'always'],
     'padded-blocks': ['error', 'never'],
