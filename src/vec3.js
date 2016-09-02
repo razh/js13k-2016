@@ -24,6 +24,13 @@ export function vec3_add(a, b) {
   return a;
 }
 
+export function vec3_sub(a, b) {
+  a.x -= b.x;
+  a.y -= b.y;
+  a.z -= b.z;
+  return a;
+}
+
 export function vec3_subVectors(v, a, b) {
   v.x = a.x - b.x;
   v.y = a.y - b.y;
@@ -36,6 +43,19 @@ export function vec3_multiplyScalar(v, scalar) {
   v.y *= scalar;
   v.z *= scalar;
   return v;
+}
+
+export function vec3_transformDirection(v, m) {
+  // input: THREE.Matrix4 affine matrix
+  // vector interpreted as a direction
+
+  var x = v.x, y = v.y, z = v.z;
+
+  v.x = m[0] * x + m[4] * y + m[8] * z;
+  v.y = m[1] * x + m[5] * y + m[9] * z;
+  v.z = m[2] * x + m[6] * y + m[10] * z;
+
+  return vec3_normalize(v);
 }
 
 export function vec3_divideScalar(v, scalar) {
@@ -95,6 +115,13 @@ export function vec3_applyQuaternion(v, q) {
   v.y = iy * qw + iw * -qy + iz * -qx - ix * -qz;
   v.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
 
+  return v;
+}
+
+export function vec3_setFromMatrixPosition(v, m) {
+  v.x = m[12];
+  v.y = m[13];
+  v.z = m[14];
   return v;
 }
 
