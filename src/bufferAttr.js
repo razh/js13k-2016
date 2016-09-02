@@ -8,4 +8,6 @@ export function bufferAttr_copyVector3sArray(array, vectors) {
     array[offset++] = vector.y;
     array[offset++] = vector.z;
   }
+
+  return array;
 }
