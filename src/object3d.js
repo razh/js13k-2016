@@ -14,6 +14,7 @@ import {
 
 export function object3d_create() {
   return {
+    parent: null,
     children: [],
     position: vec3_create(),
     quaternion: quat_create(),
@@ -21,6 +22,19 @@ export function object3d_create() {
     matrix: mat4_create(),
     matrixWorld: mat4_create(),
   };
+}
+
+export function object3d_add(parent, child) {
+  child.parent = parent;
+  parent.children.push(child);
+  return parent;
+}
+
+export function object3d_remove(parent, child) {
+  var index = parent.children.indexOf(child);
+  if (index >= 0) {
+    parent.children.splice(index, 1);
+  }
 }
 
 export var object3d_rotateOnAxis = (function() {
