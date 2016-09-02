@@ -21,58 +21,66 @@ camera.position.x = 1;
 camera.position.y = 2;
 camera.position.z = 8;
 
-object3d_updateMatrix(mesh);
-object3d_updateMatrixWorld(mesh);
-object3d_updateMatrix(camera);
-object3d_updateMatrixWorld(camera);
-mat4_getInverse(camera.matrixWorldInverse, camera.matrixWorld);
-mat4_multiplyMatrices(mesh.modelViewMatrix, camera.matrixWorldInverse, mesh.matrixWorld);
+c.width = window.innerWidth;
+c.height = window.innerHeight;
 
-function render(el) {
-  var gl = el.getContext('webgl');
-  gl.clearColor(0, 0, 0, 0);
-  gl.clear(gl.COLOR_BUFFER_BIT);
+var gl = c.getContext('webgl');
+gl.clearColor(0, 0, 0, 0);
+gl.clear(gl.COLOR_BUFFER_BIT);
 
-  var program = createShaderProgram(
-    gl,
+var program = createShaderProgram(
+  gl,
 
-    'precision highp float;' +
-    'precision highp int;' +
-     // modelViewMatrix
-    'uniform mat4 M;' +
-    // projectionMatrix
-    'uniform mat4 P;' +
-    // position
-    'attribute vec3 p;' +
-    // // normal
-    // 'attribute vec3 n;' +
-    // // color
-    // 'attribute vec3 c;' +
-    // // vColor
-    // 'varying vec3 vc;' +
-    'void main(){' +
-      // 'vc = c;' +
-      'gl_Position=P*M*vec4(p,1.0);' +
-    '}',
+  'precision highp float;' +
+  'precision highp int;' +
+   // modelViewMatrix
+  'uniform mat4 M;' +
+  // projectionMatrix
+  'uniform mat4 P;' +
+  // position
+  'attribute vec3 p;' +
+  // // normal
+  // 'attribute vec3 n;' +
+  // // color
+  // 'attribute vec3 c;' +
+  // // vColor
+  // 'varying vec3 vc;' +
+  'void main(){' +
+    // 'vc = c;' +
+    'gl_Position=P*M*vec4(p,1.0);' +
+  '}',
 
-    'precision highp float;' +
-    'precision highp int;' +
-    // 'varying vec3 vc;' +
-    'void main(){' +
-      // 'gl_FragColor=vec4(vc,1.0);' +
-      'gl_FragColor=vec4(1.0);' +
-    '}'
-  );
+  'precision highp float;' +
+  'precision highp int;' +
+  // 'varying vec3 vc;' +
+  'void main(){' +
+    // 'gl_FragColor=vec4(vc,1.0);' +
+    'gl_FragColor=vec4(1.0);' +
+  '}'
+);
 
-  gl.useProgram(program);
+gl.useProgram(program);
+
+function render(t) {
+  t = (t || 0) * 1e-3;
+
+  mesh.position.x = Math.cos(t);
+  quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, t + 1));
+
+  object3d_updateMatrix(mesh);
+  object3d_updateMatrixWorld(mesh);
+  object3d_updateMatrix(camera);
+  object3d_updateMatrixWorld(camera);
+  mat4_getInverse(camera.matrixWorldInverse, camera.matrixWorld);
+  mat4_multiplyMatrices(mesh.modelViewMatrix, camera.matrixWorldInverse, mesh.matrixWorld);
 
   setMat4Uniform(gl, program, 'M', mesh.modelViewMatrix);
   setMat4Uniform(gl, program, 'P', camera.projectionMatrix);
   setFloat32Attribute(gl, program, 'p', 3, bufferGeom.attrs.p);
 
   gl.drawArrays(gl.TRIANGLES, 0, bufferGeom.attrs.p.length / 3);
+
+  requestAnimationFrame(render);
 }
 
-c.width = window.innerWidth;
-c.height = window.innerHeight;
-render(c);
+render();
