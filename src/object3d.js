@@ -1,4 +1,4 @@
-import { mat4_create } from './mat4';
+import { mat4_create, mat4_compose, mat4_copy, mat4_multiplyMatrices } from './mat4';
 import { quat_create, quat_multiply, quat_setFromAxisAngle } from './quat';
 
 import {
@@ -21,6 +21,7 @@ export function object3d_create() {
     scale: vec3_create(1, 1, 1),
     matrix: mat4_create(),
     matrixWorld: mat4_create(),
+    modelViewMatrix: mat4_create(),
   };
 }
 
@@ -79,4 +80,18 @@ export function object3d_translateY(obj, distance) {
 
 export function object3d_translateZ(obj, distance) {
   return object3d_translateOnAxis(obj, vec3_Z, distance);
+}
+
+export function object3d_updateMatrix(obj) {
+  mat4_compose(obj.matrix, obj.position, obj.quaternion, obj.scale);
+}
+
+export function object3d_updateMatrixWorld(obj) {
+  if (!obj.parent) {
+    mat4_copy(obj.matrixWorld, obj.matrix)
+  } else {
+    mat4_multiplyMatrices(obj.matrixWorld, obj.parent.matrixWorld, obj.matrix);
+  }
+
+  obj.children.map(object3d_updateMatrixWorld);
 }
