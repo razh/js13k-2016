@@ -32,6 +32,26 @@ export function quat_setFromAxisAngle(q, axis, angle) {
   return q;
 }
 
+export function quat_setFromEuler(q, euler) {
+  // http://www.mathworks.com/matlabcentral/fileexchange/
+  //  20696-function-to-convert-between-dcm-euler-angles-quaternions-and-euler-vectors/
+  //  content/SpinCalc.m
+
+  var c1 = Math.cos(euler.x / 2);
+  var c2 = Math.cos(euler.y / 2);
+  var c3 = Math.cos(euler.z / 2);
+  var s1 = Math.sin(euler.x / 2);
+  var s2 = Math.sin(euler.y / 2);
+  var s3 = Math.sin(euler.z / 2);
+
+  q.x = s1 * c2 * c3 + c1 * s2 * s3;
+  q.y = c1 * s2 * c3 - s1 * c2 * s3;
+  q.z = c1 * c2 * s3 + s1 * s2 * c3;
+  q.w = c1 * c2 * c3 - s1 * s2 * s3;
+
+  return q;
+}
+
 export function quat_setFromRotationMatrix(q, m) {
   // http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
   // assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
