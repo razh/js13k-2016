@@ -90,6 +90,8 @@ function render(t) {
   mat4_getInverse(camera.matrixWorldInverse, camera.matrixWorld);
   mat4_multiplyMatrices(mesh.modelViewMatrix, camera.matrixWorldInverse, mesh.matrixWorld);
 
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
   setMat4Uniform(gl, program, 'M', mesh.modelViewMatrix);
   setMat4Uniform(gl, program, 'P', camera.projectionMatrix);
   setFloat32Attribute(gl, program, 'p', 3, bufferGeom.attrs.p);
