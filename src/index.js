@@ -2,7 +2,7 @@
 
 import { boxGeom_create } from './boxGeom';
 import { bufferGeom_create, bufferGeom_fromGeom } from './bufferGeom';
-import { camera_create } from './camera';
+import { camera_create, camera_updateProjectionMatrix } from './camera';
 import { color_create, color_copy, color_multiplyScalar } from './color';
 import { directionalLight_create } from './directionalLight';
 import { mat4_getInverse, mat4_multiplyMatrices } from './mat4';
@@ -115,3 +115,16 @@ function render(t) {
 }
 
 render();
+
+function setSize(width, height) {
+  c.width = width;
+  c.height = height;
+  gl.viewport(0, 0, width, height);
+}
+
+window.addEventListener('resize', function() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera_updateProjectionMatrix(camera);
+
+  setSize(window.innerWidth, window.innerHeight);
+});
