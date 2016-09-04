@@ -8,6 +8,7 @@ const browserSync = require('browser-sync').create();
 const del = require('del');
 const rollup = require('rollup').rollup;
 const runSequence = require('run-sequence');
+const string = require('rollup-plugin-string');
 
 let production = false;
 
@@ -23,7 +24,14 @@ gulp.task('browser-sync', () => {
 gulp.task('clean', () => del(['build', 'dist']));
 
 gulp.task('rollup', () => {
-  return rollup({ entry: 'src/index.js' })
+  return rollup({
+    entry: 'src/index.js',
+    plugins: [
+      string({
+        include: '**/*.glsl',
+      }),
+    ],
+  })
     .then(bundle => bundle.write({
       dest: 'build/bundle.js',
       format: 'iife',

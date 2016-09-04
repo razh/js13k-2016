@@ -31,6 +31,7 @@
     "gulp-uglify": "2.0.0",
     "gulp-zip": "3.2.0",
     "rollup": "0.34.13",
+    "rollup-plugin-string": "2.0.2",
     "run-sequence": "1.2.2"
   }
 }
