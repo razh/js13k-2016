@@ -8,15 +8,22 @@ import { directionalLight_create } from './directionalLight';
 import { mat4_getInverse, mat4_multiplyMatrices } from './mat4';
 import { material_create } from './material';
 import { mesh_create } from './mesh';
-import { object3d_updateMatrix, object3d_updateMatrixWorld } from './object3d';
+import { object3d_create, object3d_add, object3d_updateMatrixWorld } from './object3d';
 import { quat_setFromEuler } from './quat';
 import { createShaderProgram, setFloat32Attribute, setMat4Uniform, setVec3Uniform } from './shader';
 import { vec3_create, vec3_setFromMatrixPosition, vec3_sub, vec3_transformDirection } from './vec3';
 
 var box = boxGeom_create(1, 1, 1);
-var bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), box);
+box._bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), box);
 var mesh = mesh_create(box, material_create());
 quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, -Math.PI / 6));
+
+var box2 = boxGeom_create(1, 2, 1);
+box2._bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), box2);
+var mesh2 = mesh_create(box2, material_create())
+mesh2.position.x = 2;
+
+var objects = [mesh, mesh2];
 
 var camera = camera_create(60, window.innerWidth / window.innerHeight);
 
@@ -26,6 +33,12 @@ camera.position.z = 8;
 
 var light = directionalLight_create(color_create(1, 0.5, 0.5));
 var directionalLights = [light];
+
+var scene = object3d_create();
+object3d_add(scene, mesh);
+object3d_add(scene, mesh2);
+object3d_add(scene, camera);
+object3d_add(scene, light);
 
 c.width = window.innerWidth;
 c.height = window.innerHeight;
@@ -81,20 +94,10 @@ function render(t) {
   mesh.position.x = Math.cos(t);
   quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, t + 1));
 
-  object3d_updateMatrix(mesh);
-  object3d_updateMatrixWorld(mesh);
-  object3d_updateMatrix(camera);
-  object3d_updateMatrixWorld(camera);
-  object3d_updateMatrix(light);
-  object3d_updateMatrixWorld(light);
+  object3d_updateMatrixWorld(scene);
   mat4_getInverse(camera.matrixWorldInverse, camera.matrixWorld);
-  mat4_multiplyMatrices(mesh.modelViewMatrix, camera.matrixWorldInverse, mesh.matrixWorld);
 
   gl.clear(gl.COLOR_BUFFER_BIT);
-
-  setMat4Uniform(gl, program, 'M', mesh.modelViewMatrix);
-  setMat4Uniform(gl, program, 'P', camera.projectionMatrix);
-  setFloat32Attribute(gl, program, 'p', 3, bufferGeom.attrs.p);
 
   directionalLights.map(function(light) {
     var _vec3 = vec3_create();
@@ -109,7 +112,15 @@ function render(t) {
     setVec3Uniform(gl, program, 'dl[0].c', color.r, color.g, color.b);
   });
 
-  gl.drawArrays(gl.TRIANGLES, 0, bufferGeom.attrs.p.length / 3);
+  objects.map(function(object) {
+    mat4_multiplyMatrices(object.modelViewMatrix, camera.matrixWorldInverse, object.matrixWorld);
+
+    setMat4Uniform(gl, program, 'M', object.modelViewMatrix);
+    setMat4Uniform(gl, program, 'P', camera.projectionMatrix);
+    setFloat32Attribute(gl, program, 'p', 3, object.geometry._bufferGeom.attrs.p);
+
+    gl.drawArrays(gl.TRIANGLES, 0, object.geometry._bufferGeom.attrs.p.length / 3);
+  });
 
   requestAnimationFrame(render);
 }

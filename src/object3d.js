@@ -87,6 +87,8 @@ export function object3d_updateMatrix(obj) {
 }
 
 export function object3d_updateMatrixWorld(obj) {
+  object3d_updateMatrix(obj);
+
   if (!obj.parent) {
     mat4_copy(obj.matrixWorld, obj.matrix)
   } else {
