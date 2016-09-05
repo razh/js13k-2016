@@ -10,7 +10,13 @@ import { material_create } from './material';
 import { mesh_create } from './mesh';
 import { object3d_create, object3d_add, object3d_updateMatrixWorld } from './object3d';
 import { quat_setFromEuler } from './quat';
-import { createShaderProgram, setFloat32Attribute, setMat4Uniform, setVec3Uniform } from './shader';
+import {
+  createShaderProgram,
+  setFloat32Attribute,
+  setFloatUniform,
+  setMat4Uniform,
+  setVec3Uniform,
+} from './shader';
 import { vec3_create, vec3_setFromMatrixPosition, vec3_sub, vec3_transformDirection } from './vec3';
 
 var box = boxGeom_create(1, 1, 1);
