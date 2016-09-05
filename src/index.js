@@ -19,6 +19,9 @@ import {
 } from './shader';
 import { vec3_create, vec3_setFromMatrixPosition, vec3_sub, vec3_transformDirection } from './vec3';
 
+import vs from './shaders/phong_vert.glsl';
+import fs from './shaders/phong_frag.glsl';
+
 var box = boxGeom_create(1, 1, 1);
 box._bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), box);
 var mesh = mesh_create(box, material_create());
@@ -51,46 +54,11 @@ c.height = window.innerHeight;
 
 var gl = c.getContext('webgl');
 gl.clearColor(0, 0, 0, 0);
-gl.clear(gl.COLOR_BUFFER_BIT);
+gl.enable(gl.DEPTH_TEST);
+gl.enable(gl.CULL_FACE);
+gl.getExtension('OES_standard_derivatives');
 
-var program = createShaderProgram(
-  gl,
-
-  'precision highp float;' +
-  'precision highp int;' +
-   // modelViewMatrix
-  'uniform mat4 M;' +
-  // projectionMatrix
-  'uniform mat4 P;' +
-  // position
-  'attribute vec3 p;' +
-  // // normal
-  // 'attribute vec3 n;' +
-  // // color
-  // 'attribute vec3 c;' +
-  // // vColor
-  // 'varying vec3 vc;' +
-  'void main(){' +
-    // 'vc = c;' +
-    'gl_Position=P*M*vec4(p,1.0);' +
-  '}',
-
-  'precision highp float;' +
-  'precision highp int;' +
-  // 'varying vec3 vc;' +
-  // DirectionalLight
-  'struct DL{' +
-     // direction
-     'vec3 d;' +
-     // color
-     'vec3 c;' +
-  '};' +
-  'uniform DL dl[1];' +
-  'void main(){' +
-    // 'gl_FragColor=vec4(vc,1.0);' +
-    'gl_FragColor=vec4(dl[0].c, 1.0);' +
-  '}'
-);
+var program = createShaderProgram(gl, vs, fs);
 
 gl.useProgram(program);
 
@@ -99,13 +67,21 @@ function render(t) {
 
   mesh.position.x = Math.cos(t);
   quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, t + 1));
-
+  light.position.x = Math.cos(t) * 3;
+  light.position.z = Math.sin(t) * 3;
   object3d_updateMatrixWorld(scene);
   mat4_getInverse(camera.matrixWorldInverse, camera.matrixWorld);
 
-  gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  directionalLights.map(function(light) {
+  setVec3Uniform(gl, program, 'diffuse', 1, 0.4, 0.8);
+  setVec3Uniform(gl, program, 'specular', 1, 1, 1);
+  setFloatUniform(gl, program, 'shininess', 30);
+  setVec3Uniform(gl, program, 'emissive', 0, 0, 0);
+
+  setVec3Uniform(gl, program, 'ambientLightColor', 0.5, 0.5, 0.9);
+
+  directionalLights.map(function(light, index) {
     var _vec3 = vec3_create();
 
     var direction = vec3_setFromMatrixPosition(vec3_create(), light.matrixWorld);
@@ -114,18 +90,18 @@ function render(t) {
 
     var color = color_multiplyScalar(color_copy(color_create(), light.color), light.intensity);
 
-    setVec3Uniform(gl, program, 'dl[0].d', direction.x, direction.y, direction.z);
-    setVec3Uniform(gl, program, 'dl[0].c', color.r, color.g, color.b);
+    setVec3Uniform(gl, program, 'directionalLights[' + index + '].direction', direction.x, direction.y, direction.z);
+    setVec3Uniform(gl, program, 'directionalLights[' + index + '].color', color.r, color.g, color.b);
   });
 
   objects.map(function(object) {
     mat4_multiplyMatrices(object.modelViewMatrix, camera.matrixWorldInverse, object.matrixWorld);
 
-    setMat4Uniform(gl, program, 'M', object.modelViewMatrix);
-    setMat4Uniform(gl, program, 'P', camera.projectionMatrix);
-    setFloat32Attribute(gl, program, 'p', 3, object.geometry._bufferGeom.attrs.p);
+    setMat4Uniform(gl, program, 'modelViewMatrix', object.modelViewMatrix);
+    setMat4Uniform(gl, program, 'projectionMatrix', camera.projectionMatrix);
+    setFloat32Attribute(gl, program, 'position', 3, object.geometry._bufferGeom.attrs.position);
 
-    gl.drawArrays(gl.TRIANGLES, 0, object.geometry._bufferGeom.attrs.p.length / 3);
+    gl.drawArrays(gl.TRIANGLES, 0, object.geometry._bufferGeom.attrs.position.length / 3);
   });
 
   requestAnimationFrame(render);
