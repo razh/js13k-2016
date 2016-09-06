@@ -149,7 +149,7 @@ export function vec3_setFromMatrixPosition(v, m) {
 export function vec3_fromArray(v, array) {
   v.x = array[0];
   v.y = array[1];
-  v.z = array[1];
+  v.z = array[2];
   return v;
 }
 

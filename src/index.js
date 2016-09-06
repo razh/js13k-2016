@@ -3,7 +3,6 @@
 import { boxGeom_create } from './boxGeom';
 import { bufferGeom_create, bufferGeom_fromGeom } from './bufferGeom';
 import { camera_create, camera_lookAt, camera_updateProjectionMatrix } from './camera';
-import { color_create, color_copy, color_multiplyScalar } from './color';
 import { directionalLight_create } from './directionalLight';
 import { mat4_getInverse, mat4_multiplyMatrices } from './mat4';
 import { material_create } from './material';
@@ -17,7 +16,14 @@ import {
   setMat4Uniform,
   setVec3Uniform,
 } from './shader';
-import { vec3_create, vec3_setFromMatrixPosition, vec3_sub, vec3_transformDirection } from './vec3';
+import {
+  vec3_create,
+  vec3_copy,
+  vec3_multiplyScalar,
+  vec3_setFromMatrixPosition,
+  vec3_sub,
+  vec3_transformDirection,
+} from './vec3';
 import { alignBoxVertices } from './boxAlign';
 import { applyBoxVertexColors, applyDefaultVertexColors } from './boxColors';
 import { scaleBoxVertices } from './boxTransform';
@@ -50,7 +56,7 @@ camera.position.y = 2;
 camera.position.z = 8;
 camera_lookAt(camera, vec3_create());
 
-var light = directionalLight_create(color_create(1, 0.5, 0.5));
+var light = directionalLight_create(vec3_create(1, 0.5, 0.5));
 var directionalLights = [light];
 
 var scene = object3d_create();
@@ -98,10 +104,10 @@ function render(t) {
     vec3_setFromMatrixPosition(_vec3, light.target.matrixWorld);
     vec3_transformDirection(vec3_sub(direction, _vec3), camera.matrixWorldInverse);
 
-    var color = color_multiplyScalar(color_copy(color_create(), light.color), light.intensity);
+    var color = vec3_multiplyScalar(vec3_copy(vec3_create(), light.color), light.intensity);
 
     setVec3Uniform(gl, program, 'directionalLights[' + index + '].direction', direction.x, direction.y, direction.z);
-    setVec3Uniform(gl, program, 'directionalLights[' + index + '].color', color.r, color.g, color.b);
+    setVec3Uniform(gl, program, 'directionalLights[' + index + '].color', color.x, color.y, color.z);
   });
 
   objects.map(function(object) {

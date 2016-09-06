@@ -1,13 +1,13 @@
-import { color_create } from './color';
+import { vec3_create } from './vec3';
 
 // MeshPhongMaterial.
 export function material_create() {
   return {
-    color: color_create(1, 1, 1),
+    color: vec3_create(1, 1, 1),
     // 0x111111
-    specular: color_create(1 / 15, 1 / 15, 1 / 15),
+    specular: vec3_create(1 / 15, 1 / 15, 1 / 15),
     shininess: 30,
-    emissive: color_create(),
+    emissive: vec3_create(),
     emissiveIntensity: 1,
   };
 }

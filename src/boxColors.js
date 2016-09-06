@@ -1,5 +1,5 @@
 import boxVertexIndices from './boxVertexIndices';
-import { color_create } from './color';
+import { vec3_create, vec3_fromArray } from './vec3';
 
 function setFaceVertexColor(face, index, color) {
   if (face.a === index) {
@@ -17,7 +17,7 @@ function setFaceVertexColor(face, index, color) {
 
 export function applyBoxVertexColors(geom, colors) {
   Object.keys(colors).forEach(function(key) {
-    var color = color_create.apply(null, colors[key]);
+    var color = vec3_fromArray(vec3_create(), colors[key]);
     var indices = boxVertexIndices[key.toUpperCase()];
 
     geom.faces.forEach(function(face) {
@@ -35,7 +35,7 @@ export function applyBoxVertexColors(geom, colors) {
 }
 
 export function applyDefaultVertexColors(geom, defaultColor) {
-  defaultColor = color_create.apply(null, defaultColor);
+  defaultColor = vec3_fromArray(vec3_create(), defaultColor);
 
   geom.faces.forEach(function(face) {
     for (var i = 0; i < 3; i++) {
