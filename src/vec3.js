@@ -38,6 +38,13 @@ export function vec3_subVectors(v, a, b) {
   return v;
 }
 
+export function vec3_multiply(a, b) {
+  a.x *= b.x;
+  a.y *= b.y;
+  a.z *= b.z;
+  return a;
+}
+
 export function vec3_multiplyScalar(v, scalar) {
   v.x *= scalar;
   v.y *= scalar;
