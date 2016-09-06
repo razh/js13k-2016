@@ -24,7 +24,7 @@ export var camera_lookAt = (function() {
   var m1 = mat4_create();
 
   return function(camera, vector) {
-    mat4_lookAt(m1, vector, camera.position, camera.up);
+    mat4_lookAt(m1, camera.position, vector, camera.up);
     quat_setFromRotationMatrix(camera.quaternion, m1);
   };
 }());
