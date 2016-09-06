@@ -24,13 +24,6 @@ export function vec3_clone(v) {
   return vec3_create(v.x, v.y, v.z);
 }
 
-export function vec3_copy(a, b) {
-  a.x = b.x;
-  a.y = b.y;
-  a.z = b.z;
-  return a;
-}
-
 export function vec3_add(a, b) {
   a.x += b.x;
   a.y += b.y;

@@ -3,7 +3,6 @@ import { quat_create, quat_multiply, quat_setFromAxisAngle } from './quat';
 
 import {
   vec3_create,
-  vec3_copy,
   vec3_add,
   vec3_multiplyScalar,
   vec3_applyQuaternion,
@@ -64,7 +63,7 @@ export var object3d_translateOnAxis = (function() {
   var v1 = vec3_create();
 
   return function(obj, axis, distance) {
-    vec3_applyQuaternion(vec3_copy(v1, axis), obj.quaternion);
+    vec3_applyQuaternion(Object.assign(v1, axis), obj.quaternion);
     vec3_add(obj.position, vec3_multiplyScalar(v1, distance));
     return obj;
   };

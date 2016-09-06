@@ -18,7 +18,6 @@ import {
 } from './shader';
 import {
   vec3_create,
-  vec3_copy,
   vec3_multiplyScalar,
   vec3_setFromMatrixPosition,
   vec3_sub,
@@ -104,7 +103,7 @@ function render(t) {
     vec3_setFromMatrixPosition(_vec3, light.target.matrixWorld);
     vec3_transformDirection(vec3_sub(direction, _vec3), camera.matrixWorldInverse);
 
-    var color = vec3_multiplyScalar(vec3_copy(vec3_create(), light.color), light.intensity);
+    var color = vec3_multiplyScalar(Object.assign(vec3_create(), light.color), light.intensity);
 
     setVec3Uniform(gl, program, 'directionalLights[' + index + '].direction', direction.x, direction.y, direction.z);
     setVec3Uniform(gl, program, 'directionalLights[' + index + '].color', color.x, color.y, color.z);
