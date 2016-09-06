@@ -6,6 +6,20 @@ export function vec3_create(x, y, z) {
   };
 }
 
+export function vec3_set(v, x, y, z) {
+  v.x = x;
+  v.y = y;
+  v.z = z;
+  return v;
+}
+
+export function vec3_setScalar(v, scalar) {
+  v.x = scalar;
+  v.y = scalar;
+  v.z = scalar;
+  return v;
+}
+
 export function vec3_clone(v) {
   return vec3_create(v.x, v.y, v.z);
 }
@@ -129,6 +143,13 @@ export function vec3_setFromMatrixPosition(v, m) {
   v.x = m[12];
   v.y = m[13];
   v.z = m[14];
+  return v;
+}
+
+export function vec3_fromArray(v, array) {
+  v.x = array[0];
+  v.y = array[1];
+  v.z = array[1];
   return v;
 }
 
