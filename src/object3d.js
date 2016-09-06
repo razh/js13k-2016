@@ -90,7 +90,7 @@ export function object3d_updateMatrixWorld(obj) {
   object3d_updateMatrix(obj);
 
   if (!obj.parent) {
-    mat4_copy(obj.matrixWorld, obj.matrix)
+    mat4_copy(obj.matrixWorld, obj.matrix);
   } else {
     mat4_multiplyMatrices(obj.matrixWorld, obj.parent.matrixWorld, obj.matrix);
   }

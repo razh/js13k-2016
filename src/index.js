@@ -29,7 +29,7 @@ quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, -Math.PI / 6));
 
 var box2 = boxGeom_create(1, 2, 1);
 box2._bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), box2);
-var mesh2 = mesh_create(box2, material_create())
+var mesh2 = mesh_create(box2, material_create());
 mesh2.position.x = 2;
 
 var objects = [mesh, mesh2];
