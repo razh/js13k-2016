@@ -26,6 +26,7 @@ import {
 import { alignBoxVertices } from './boxAlign';
 import { applyBoxVertexColors, applyDefaultVertexColors } from './boxColors';
 import { scaleBoxVertices } from './boxTransform';
+import playAudio from './audio';
 
 import vs from './shaders/phong_vert.glsl';
 import fs from './shaders/phong_frag.glsl';
@@ -124,6 +125,7 @@ function render(t) {
 }
 
 render();
+playAudio();
 
 function setSize(width, height) {
   c.width = width;
