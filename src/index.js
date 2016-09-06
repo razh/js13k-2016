@@ -2,7 +2,7 @@
 
 import { boxGeom_create } from './boxGeom';
 import { bufferGeom_create, bufferGeom_fromGeom } from './bufferGeom';
-import { camera_create, camera_updateProjectionMatrix } from './camera';
+import { camera_create, camera_lookAt, camera_updateProjectionMatrix } from './camera';
 import { color_create, color_copy, color_multiplyScalar } from './color';
 import { directionalLight_create } from './directionalLight';
 import { mat4_getInverse, mat4_multiplyMatrices } from './mat4';
@@ -18,16 +18,25 @@ import {
   setVec3Uniform,
 } from './shader';
 import { vec3_create, vec3_setFromMatrixPosition, vec3_sub, vec3_transformDirection } from './vec3';
+import { alignBoxVertices } from './boxAlign';
+import { applyBoxVertexColors, applyDefaultVertexColors } from './boxColors';
+import { scaleBoxVertices } from './boxTransform';
 
 import vs from './shaders/phong_vert.glsl';
 import fs from './shaders/phong_frag.glsl';
 
 var box = boxGeom_create(1, 1, 1);
+alignBoxVertices(box, 'px_py');
 box._bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), box);
 var mesh = mesh_create(box, material_create());
 quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, -Math.PI / 6));
 
-var box2 = boxGeom_create(1, 2, 1);
+var box2 = boxGeom_create(1, 4, 1);
+alignBoxVertices(box2, 'py');
+scaleBoxVertices(box2, { py: 0 });
+alignBoxVertices(box2, 'px');
+applyDefaultVertexColors(box2, [1, 1, 1]);
+applyBoxVertexColors(box2, { py: [0.5, 0, 1] });
 box2._bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), box2);
 var mesh2 = mesh_create(box2, material_create());
 mesh2.position.x = 2;
@@ -36,9 +45,10 @@ var objects = [mesh, mesh2];
 
 var camera = camera_create(60, window.innerWidth / window.innerHeight);
 
-camera.position.x = 1;
+camera.position.x = 4;
 camera.position.y = 2;
 camera.position.z = 8;
+camera_lookAt(camera, vec3_create());
 
 var light = directionalLight_create(color_create(1, 0.5, 0.5));
 var directionalLights = [light];
