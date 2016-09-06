@@ -6,15 +6,11 @@ uniform mat4 projectionMatrix;
 attribute vec3 position;
 varying vec3 vViewPosition;
 
-#ifdef USE_COLOR
-  attribute vec3 color;
-  varying vec3 vColor;
-#endif
+attribute vec3 color;
+varying vec3 vColor;
 
 void main() {
-  #ifdef USE_COLOR
-    vColor.rgb = color.rgb;
-  #endif
+  vColor.rgb = color.rgb;
 
   vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
 

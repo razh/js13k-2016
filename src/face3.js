@@ -5,7 +5,7 @@ export function face3_create(a, b, c) {
     a: a,
     b: b,
     c: c,
-    color: color_create(),
+    color: color_create(1, 1, 1),
     vertexColors: [],
   };
 }

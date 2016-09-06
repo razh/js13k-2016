@@ -100,6 +100,7 @@ function render(t) {
     setMat4Uniform(gl, program, 'modelViewMatrix', object.modelViewMatrix);
     setMat4Uniform(gl, program, 'projectionMatrix', camera.projectionMatrix);
     setFloat32Attribute(gl, program, 'position', 3, object.geometry._bufferGeom.attrs.position);
+    setFloat32Attribute(gl, program, 'color', 3, object.geometry._bufferGeom.attrs.color);
 
     gl.drawArrays(gl.TRIANGLES, 0, object.geometry._bufferGeom.attrs.position.length / 3);
   });

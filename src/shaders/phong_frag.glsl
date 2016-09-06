@@ -29,9 +29,7 @@ struct GeometricContext {
   vec3 viewDir;
 };
 
-#ifdef USE_COLOR
-  varying vec3 vColor;
-#endif
+varying vec3 vColor;
 
 vec3 BRDF_Diffuse_Lambert(const in vec3 diffuseColor) {
   return RECIPROCAL_PI * diffuseColor;
@@ -100,9 +98,7 @@ void main() {
   vec3 diffuseColor = diffuse;
   ReflectedLight reflectedLight = ReflectedLight(vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0));
 
-  #ifdef USE_COLOR
-    diffuseColor *= vColor;
-  #endif
+  diffuseColor *= vColor;
 
   vec3 fdx = vec3(dFdx(vViewPosition.x), dFdx(vViewPosition.y), dFdx(vViewPosition.z));
   vec3 fdy = vec3(dFdy(vViewPosition.x), dFdy(vViewPosition.y), dFdy(vViewPosition.z));
