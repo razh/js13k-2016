@@ -13,17 +13,6 @@ export function bufferGeom_fromGeom(bufferGeom, geom) {
 
 export function bufferGeom_fromDirectGeom(bufferGeom, geom) {
   var positions = new Float32Array(geom.vertices.length * 3);
-  bufferGeom_addAttribute(bufferGeom, 'position', bufferAttr_copyVector3sArray(positions, geom.vertices));
-
-  if (geom.normals.length > 0) {
-    var normals = new Float32Array(geom.normals.length * 3);
-    bufferGeom_addAttribute(bufferGeom, 'normal', bufferAttr_copyVector3sArray(normals, geom.normals));
-  }
-
+  bufferGeom.attrs.position = bufferAttr_copyVector3sArray(positions, geom.vertices);
   return bufferGeom;
-}
-
-export function bufferGeom_addAttribute(geom, name, attr) {
-  geom.attrs[name] = attr;
-  return geom;
 }

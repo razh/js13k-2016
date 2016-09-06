@@ -1,4 +1,4 @@
-import { geom_create, geom_push, geom_computeFaceNormals } from './geom';
+import { geom_create, geom_push } from './geom';
 
 export function boxGeom_create(width, height, depth) {
   var halfWidth = width / 2;
@@ -35,5 +35,5 @@ export function boxGeom_create(width, height, depth) {
     3, 6, 4,
   ];
 
-  return geom_computeFaceNormals(geom_push(geom_create(), vertices, faces));
+  return geom_push(geom_create(), vertices, faces);
 }
