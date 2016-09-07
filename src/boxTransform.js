@@ -12,7 +12,7 @@ function transformBoxVertices(method) {
   var zero = vec3_create();
 
   return function(geom, vectors) {
-    Object.keys(vectors).forEach(function(key) {
+    Object.keys(vectors).map(function(key) {
       var delta = vectors[key];
       var indices = boxVertexIndices[key.toUpperCase()];
 
@@ -27,7 +27,7 @@ function transformBoxVertices(method) {
       }
 
       if (Array.isArray(indices)) {
-        indices.forEach(function(index) {
+        indices.map(function(index) {
           method(geom.vertices[index], vector);
         });
       } else {

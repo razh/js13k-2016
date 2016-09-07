@@ -41,7 +41,7 @@ export var geom_translate = (function() {
   return function(geom, x, y, z) {
     vec3_set(vector, x, y, z);
 
-    geom.vertices.forEach(function(vertex) {
+    geom.vertices.map(function(vertex) {
       vec3_add(vertex, vector);
     });
 

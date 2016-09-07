@@ -10,7 +10,7 @@ export function alignBoxVertices(geom, alignment) {
   if (Array.isArray(indices)) {
     vec3_set(centroid, 0, 0, 0);
 
-    indices.forEach(function(index) {
+    indices.map(function(index) {
       vec3_add(centroid, geom.vertices[index]);
     });
 
