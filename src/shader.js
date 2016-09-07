@@ -16,11 +16,16 @@ export function createShaderProgram(gl, vs, fs) {
   return program;
 }
 
-export function setFloat32Attribute(gl, program, name, size, array) {
-  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+export function createFloat32Buffer(gl, array) {
+  var buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(array), gl.STATIC_DRAW);
+  return buffer;
+}
 
+export function setFloat32Attribute(gl, program, name, buffer, size) {
   var location = gl.getAttribLocation(program, name);
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   gl.enableVertexAttribArray(location);
   gl.vertexAttribPointer(location, size, gl.FLOAT, false, 0, 0);
 }

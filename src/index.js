@@ -11,6 +11,7 @@ import { object3d_create, object3d_add, object3d_updateMatrixWorld } from './obj
 import { quat_setFromEuler } from './quat';
 import {
   createShaderProgram,
+  createFloat32Buffer,
   setFloat32Attribute,
   setFloatUniform,
   setMat4Uniform,
@@ -108,6 +109,15 @@ var uniforms = cacheUniformLocations(gl, program, [
 
 gl.useProgram(program);
 
+function setFloat32AttributeBuffer(name, bufferGeom, size) {
+  var buffer = (
+    bufferGeom.buffers[name] ||
+    (bufferGeom.buffers[name] = createFloat32Buffer(gl, bufferGeom.attrs[name]))
+  );
+
+  setFloat32Attribute(gl, program, name, buffer, size);
+}
+
 function renderObject(object) {
   if (object.geometry && object.material) {
     var material = object.material;
@@ -124,8 +134,8 @@ function renderObject(object) {
 
     setMat4Uniform(gl, uniforms.modelViewMatrix, object.modelViewMatrix);
     setMat4Uniform(gl, uniforms.projectionMatrix, camera.projectionMatrix);
-    setFloat32Attribute(gl, program, 'position', 3, object.geometry._bufferGeom.attrs.position);
-    setFloat32Attribute(gl, program, 'color', 3, object.geometry._bufferGeom.attrs.color);
+    setFloat32AttributeBuffer('position', object.geometry._bufferGeom, 3);
+    setFloat32AttributeBuffer('color', object.geometry._bufferGeom, 3);
 
     gl.drawArrays(gl.TRIANGLES, 0, object.geometry._bufferGeom.attrs.position.length / 3);
   }

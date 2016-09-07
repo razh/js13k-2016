@@ -4,6 +4,7 @@ import { directGeom_fromGeom } from './directGeom';
 export function bufferGeom_create() {
   return {
     attrs: {},
+    buffers: {},
   };
 }
 
