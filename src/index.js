@@ -15,6 +15,7 @@ import {
   setFloatUniform,
   setMat4Uniform,
   setVec3Uniform,
+  cacheUniformLocations,
 } from './shader';
 import {
   vec3_create,
@@ -81,6 +82,16 @@ gl.getExtension('OES_standard_derivatives');
 
 var program = createShaderProgram(gl, vs, fs);
 
+var uniforms = cacheUniformLocations(gl, program, [
+  'diffuse',
+  'specular',
+  'shininess',
+  'emissive',
+  'modelViewMatrix',
+  'projectionMatrix',
+  'ambientLightColor',
+]);
+
 gl.useProgram(program);
 
 function render(t) {
@@ -95,7 +106,7 @@ function render(t) {
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  setVec3Uniform(gl, program, 'ambientLightColor', 0.5, 0.5, 0.9);
+  setVec3Uniform(gl, uniforms.ambientLightColor, 0.5, 0.5, 0.9);
 
   directionalLights.map(function(light, index) {
     var _vec3 = vec3_create();
@@ -106,8 +117,8 @@ function render(t) {
 
     var color = vec3_multiplyScalar(Object.assign(vec3_create(), light.color), light.intensity);
 
-    setVec3Uniform(gl, program, 'directionalLights[' + index + '].direction', direction.x, direction.y, direction.z);
-    setVec3Uniform(gl, program, 'directionalLights[' + index + '].color', color.x, color.y, color.z);
+    setVec3Uniform(gl, gl.getUniformLocation(program, 'directionalLights[' + index + '].direction'), direction.x, direction.y, direction.z);
+    setVec3Uniform(gl, gl.getUniformLocation(program, 'directionalLights[' + index + '].color'), color.x, color.y, color.z);
   });
 
   objects.map(function(object) {
@@ -116,15 +127,15 @@ function render(t) {
     var specular = material.specular;
     var emissive = material.emissive;
 
-    setVec3Uniform(gl, program, 'diffuse', diffuse.x, diffuse.y, diffuse.z);
-    setVec3Uniform(gl, program, 'specular', specular.x, specular.y, specular.z);
-    setFloatUniform(gl, program, 'shininess', material.shininess);
-    setVec3Uniform(gl, program, 'emissive', emissive.x, emissive.y, emissive.z);
+    setVec3Uniform(gl, uniforms.diffuse, diffuse.x, diffuse.y, diffuse.z);
+    setVec3Uniform(gl, uniforms.specular, specular.x, specular.y, specular.z);
+    setFloatUniform(gl, uniforms.shininess, material.shininess);
+    setVec3Uniform(gl, uniforms.emissive, emissive.x, emissive.y, emissive.z);
 
     mat4_multiplyMatrices(object.modelViewMatrix, camera.matrixWorldInverse, object.matrixWorld);
 
-    setMat4Uniform(gl, program, 'modelViewMatrix', object.modelViewMatrix);
-    setMat4Uniform(gl, program, 'projectionMatrix', camera.projectionMatrix);
+    setMat4Uniform(gl, uniforms.modelViewMatrix, object.modelViewMatrix);
+    setMat4Uniform(gl, uniforms.projectionMatrix, camera.projectionMatrix);
     setFloat32Attribute(gl, program, 'position', 3, object.geometry._bufferGeom.attrs.position);
     setFloat32Attribute(gl, program, 'color', 3, object.geometry._bufferGeom.attrs.color);
 

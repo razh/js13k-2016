@@ -25,17 +25,21 @@ export function setFloat32Attribute(gl, program, name, size, array) {
   gl.vertexAttribPointer(location, size, gl.FLOAT, false, 0, 0);
 }
 
-export function setFloatUniform(gl, program, name, value) {
-  var location = gl.getUniformLocation(program, name);
+export function setFloatUniform(gl, location, value) {
   gl.uniform1f(location, value);
 }
 
-export function setMat4Uniform(gl, program, name, array) {
-  var location = gl.getUniformLocation(program, name);
+export function setMat4Uniform(gl, location, array) {
   gl.uniformMatrix4fv(location, false, array);
 }
 
-export function setVec3Uniform(gl, program, name, x, y, z) {
-  var location = gl.getUniformLocation(program, name);
+export function setVec3Uniform(gl, location, x, y, z) {
   gl.uniform3f(location, x, y, z);
+}
+
+export function cacheUniformLocations(gl, program, names) {
+  return names.reduce(function(locations, name) {
+    locations[name] = gl.getUniformLocation(program, name);
+    return locations;
+  }, {});
 }
