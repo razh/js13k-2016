@@ -94,6 +94,31 @@ var uniforms = cacheUniformLocations(gl, program, [
 
 gl.useProgram(program);
 
+function renderObject(object) {
+  if (object.geometry && object.material) {
+    var material = object.material;
+    var diffuse = material.color;
+    var specular = material.specular;
+    var emissive = material.emissive;
+
+    setVec3Uniform(gl, uniforms.diffuse, diffuse.x, diffuse.y, diffuse.z);
+    setVec3Uniform(gl, uniforms.specular, specular.x, specular.y, specular.z);
+    setFloatUniform(gl, uniforms.shininess, material.shininess);
+    setVec3Uniform(gl, uniforms.emissive, emissive.x, emissive.y, emissive.z);
+
+    mat4_multiplyMatrices(object.modelViewMatrix, camera.matrixWorldInverse, object.matrixWorld);
+
+    setMat4Uniform(gl, uniforms.modelViewMatrix, object.modelViewMatrix);
+    setMat4Uniform(gl, uniforms.projectionMatrix, camera.projectionMatrix);
+    setFloat32Attribute(gl, program, 'position', 3, object.geometry._bufferGeom.attrs.position);
+    setFloat32Attribute(gl, program, 'color', 3, object.geometry._bufferGeom.attrs.color);
+
+    gl.drawArrays(gl.TRIANGLES, 0, object.geometry._bufferGeom.attrs.position.length / 3);
+  }
+
+  object.children.map(renderObject);
+}
+
 function render(t) {
   t = (t || 0) * 1e-3;
 
@@ -121,26 +146,7 @@ function render(t) {
     setVec3Uniform(gl, gl.getUniformLocation(program, 'directionalLights[' + index + '].color'), color.x, color.y, color.z);
   });
 
-  objects.map(function(object) {
-    var material = object.material;
-    var diffuse = material.color;
-    var specular = material.specular;
-    var emissive = material.emissive;
-
-    setVec3Uniform(gl, uniforms.diffuse, diffuse.x, diffuse.y, diffuse.z);
-    setVec3Uniform(gl, uniforms.specular, specular.x, specular.y, specular.z);
-    setFloatUniform(gl, uniforms.shininess, material.shininess);
-    setVec3Uniform(gl, uniforms.emissive, emissive.x, emissive.y, emissive.z);
-
-    mat4_multiplyMatrices(object.modelViewMatrix, camera.matrixWorldInverse, object.matrixWorld);
-
-    setMat4Uniform(gl, uniforms.modelViewMatrix, object.modelViewMatrix);
-    setMat4Uniform(gl, uniforms.projectionMatrix, camera.projectionMatrix);
-    setFloat32Attribute(gl, program, 'position', 3, object.geometry._bufferGeom.attrs.position);
-    setFloat32Attribute(gl, program, 'color', 3, object.geometry._bufferGeom.attrs.color);
-
-    gl.drawArrays(gl.TRIANGLES, 0, object.geometry._bufferGeom.attrs.position.length / 3);
-  });
+  objects.map(renderObject);
 
   requestAnimationFrame(render);
 }
