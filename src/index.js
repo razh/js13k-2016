@@ -41,7 +41,6 @@ vec3_set(boxMaterial.specular, 1, 1, 1);
 
 var box = boxGeom_create(1, 1, 1);
 alignBoxVertices(box, 'px_py');
-box._bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), box);
 var mesh = mesh_create(box, boxMaterial);
 quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, -Math.PI / 6));
 
@@ -51,7 +50,6 @@ scaleBoxVertices(box2, { py: 0 });
 alignBoxVertices(box2, 'px');
 applyDefaultVertexColors(box2, [1, 1, 1]);
 applyBoxVertexColors(box2, { py: [0.5, 0, 1] });
-box2._bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), box2);
 var mesh2 = mesh_create(box2, boxMaterial);
 mesh2.position.x = 2;
 
@@ -61,14 +59,11 @@ group.position.x = -Math.sqrt(boxCount) / 2;
 group.position.z = -Math.sqrt(boxCount) / 2;
 for (var i = 0; i < boxCount; i++) {
   var box3 = boxGeom_create(0.5, 0.25, 0.5);
-  box3._bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), box3);
   var mesh3 = mesh_create(box3, boxMaterial);
   mesh3.position.x = Math.floor(i / Math.sqrt(boxCount));
   mesh3.position.z = i % Math.sqrt(boxCount);
   object3d_add(group, mesh3);
 }
-
-var objects = [mesh, mesh2, group];
 
 var camera = camera_create(60, window.innerWidth / window.innerHeight);
 
@@ -116,6 +111,7 @@ function setFloat32AttributeBuffer(name, location, bufferGeom, size) {
 
 function renderObject(object) {
   if (object.geometry && object.material) {
+    var geometry = object.geometry;
     var material = object.material;
 
     setVec3Uniform(gl, uniforms.diffuse, material.color);
@@ -127,10 +123,15 @@ function renderObject(object) {
 
     setMat4Uniform(gl, uniforms.modelViewMatrix, object.modelViewMatrix);
     setMat4Uniform(gl, uniforms.projectionMatrix, camera.projectionMatrix);
-    setFloat32AttributeBuffer('position', attributes.position, object.geometry._bufferGeom, 3);
-    setFloat32AttributeBuffer('color', attributes.color, object.geometry._bufferGeom, 3);
 
-    gl.drawArrays(gl.TRIANGLES, 0, object.geometry._bufferGeom.attrs.position.length / 3);
+    if (!geometry._bufferGeom) {
+      geometry._bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), geometry);
+    }
+
+    setFloat32AttributeBuffer('position', attributes.position, geometry._bufferGeom, 3);
+    setFloat32AttributeBuffer('color', attributes.color, geometry._bufferGeom, 3);
+
+    gl.drawArrays(gl.TRIANGLES, 0, geometry._bufferGeom.attrs.position.length / 3);
   }
 
   object.children.map(renderObject);
@@ -163,7 +164,7 @@ function render(t) {
     setVec3Uniform(gl, uniforms['directionalLights[' + index + '].color'], color);
   });
 
-  objects.map(renderObject);
+  scene.children.map(renderObject);
 
   requestAnimationFrame(render);
 }
