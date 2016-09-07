@@ -77,6 +77,8 @@ camera.position.y = 2;
 camera.position.z = 8;
 camera_lookAt(camera, vec3_create());
 
+var ambientLightColor = vec3_create(0.5, 0.5, 0.9);
+
 var light = directionalLight_create(vec3_create(1, 0.5, 0.5));
 var directionalLights = [light];
 
@@ -115,14 +117,11 @@ function setFloat32AttributeBuffer(name, location, bufferGeom, size) {
 function renderObject(object) {
   if (object.geometry && object.material) {
     var material = object.material;
-    var diffuse = material.color;
-    var specular = material.specular;
-    var emissive = material.emissive;
 
-    setVec3Uniform(gl, uniforms.diffuse, diffuse.x, diffuse.y, diffuse.z);
-    setVec3Uniform(gl, uniforms.specular, specular.x, specular.y, specular.z);
+    setVec3Uniform(gl, uniforms.diffuse, material.color);
+    setVec3Uniform(gl, uniforms.specular, material.specular);
     setFloatUniform(gl, uniforms.shininess, material.shininess);
-    setVec3Uniform(gl, uniforms.emissive, emissive.x, emissive.y, emissive.z);
+    setVec3Uniform(gl, uniforms.emissive, material.emissive);
 
     mat4_multiplyMatrices(object.modelViewMatrix, camera.matrixWorldInverse, object.matrixWorld);
 
@@ -149,7 +148,7 @@ function render(t) {
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  setVec3Uniform(gl, uniforms.ambientLightColor, 0.5, 0.5, 0.9);
+  setVec3Uniform(gl, uniforms.ambientLightColor, ambientLightColor);
 
   directionalLights.map(function(light, index) {
     var _vec3 = vec3_create();
@@ -160,8 +159,8 @@ function render(t) {
 
     var color = vec3_multiplyScalar(Object.assign(vec3_create(), light.color), light.intensity);
 
-    setVec3Uniform(gl, uniforms['directionalLights[' + index + '].direction'], direction.x, direction.y, direction.z);
-    setVec3Uniform(gl, uniforms['directionalLights[' + index + '].color'], color.x, color.y, color.z);
+    setVec3Uniform(gl, uniforms['directionalLights[' + index + '].direction'], direction);
+    setVec3Uniform(gl, uniforms['directionalLights[' + index + '].color'], color);
   });
 
   objects.map(renderObject);

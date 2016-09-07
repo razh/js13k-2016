@@ -37,8 +37,8 @@ export function setMat4Uniform(gl, location, array) {
   gl.uniformMatrix4fv(location, false, array);
 }
 
-export function setVec3Uniform(gl, location, x, y, z) {
-  gl.uniform3f(location, x, y, z);
+export function setVec3Uniform(gl, location, vector) {
+  gl.uniform3f(location, vector.x, vector.y, vector.z);
 }
 
 export function getAttributeLocations(gl, program) {
