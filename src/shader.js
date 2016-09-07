@@ -23,8 +23,7 @@ export function createFloat32Buffer(gl, array) {
   return buffer;
 }
 
-export function setFloat32Attribute(gl, program, name, buffer, size) {
-  var location = gl.getAttribLocation(program, name);
+export function setFloat32Attribute(gl, location, buffer, size) {
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   gl.enableVertexAttribArray(location);
   gl.vertexAttribPointer(location, size, gl.FLOAT, false, 0, 0);
@@ -42,9 +41,30 @@ export function setVec3Uniform(gl, location, x, y, z) {
   gl.uniform3f(location, x, y, z);
 }
 
-export function cacheUniformLocations(gl, program, names) {
-  return names.reduce(function(locations, name) {
+export function getAttributeLocations(gl, program) {
+  var locations = {};
+
+  var count = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
+
+  for (var i = 0; i < count; i++) {
+    var attribute = gl.getActiveAttrib(program, i);
+    var name = attribute.name;
+    locations[name] = gl.getAttribLocation(program, name);
+  }
+
+  return locations;
+}
+
+export function getUniformLocations(gl, program) {
+  var locations = {};
+
+  var count = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+
+  for (var i = 0; i < count; i++) {
+    var uniform = gl.getActiveUniform(program, i);
+    var name = uniform.name;
     locations[name] = gl.getUniformLocation(program, name);
-    return locations;
-  }, {});
+  }
+
+  return locations;
 }

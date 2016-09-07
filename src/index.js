@@ -16,7 +16,8 @@ import {
   setFloatUniform,
   setMat4Uniform,
   setVec3Uniform,
-  cacheUniformLocations,
+  getAttributeLocations,
+  getUniformLocations,
 } from './shader';
 import {
   vec3_create,
@@ -97,25 +98,18 @@ gl.getExtension('OES_standard_derivatives');
 
 var program = createShaderProgram(gl, vs, fs);
 
-var uniforms = cacheUniformLocations(gl, program, [
-  'diffuse',
-  'specular',
-  'shininess',
-  'emissive',
-  'modelViewMatrix',
-  'projectionMatrix',
-  'ambientLightColor',
-]);
+var attributes = getAttributeLocations(gl, program);
+var uniforms = getUniformLocations(gl, program);
 
 gl.useProgram(program);
 
-function setFloat32AttributeBuffer(name, bufferGeom, size) {
+function setFloat32AttributeBuffer(name, location, bufferGeom, size) {
   var buffer = (
     bufferGeom.buffers[name] ||
     (bufferGeom.buffers[name] = createFloat32Buffer(gl, bufferGeom.attrs[name]))
   );
 
-  setFloat32Attribute(gl, program, name, buffer, size);
+  setFloat32Attribute(gl, location, buffer, size);
 }
 
 function renderObject(object) {
@@ -134,8 +128,8 @@ function renderObject(object) {
 
     setMat4Uniform(gl, uniforms.modelViewMatrix, object.modelViewMatrix);
     setMat4Uniform(gl, uniforms.projectionMatrix, camera.projectionMatrix);
-    setFloat32AttributeBuffer('position', object.geometry._bufferGeom, 3);
-    setFloat32AttributeBuffer('color', object.geometry._bufferGeom, 3);
+    setFloat32AttributeBuffer('position', attributes.position, object.geometry._bufferGeom, 3);
+    setFloat32AttributeBuffer('color', attributes.color, object.geometry._bufferGeom, 3);
 
     gl.drawArrays(gl.TRIANGLES, 0, object.geometry._bufferGeom.attrs.position.length / 3);
   }
@@ -166,8 +160,8 @@ function render(t) {
 
     var color = vec3_multiplyScalar(Object.assign(vec3_create(), light.color), light.intensity);
 
-    setVec3Uniform(gl, gl.getUniformLocation(program, 'directionalLights[' + index + '].direction'), direction.x, direction.y, direction.z);
-    setVec3Uniform(gl, gl.getUniformLocation(program, 'directionalLights[' + index + '].color'), color.x, color.y, color.z);
+    setVec3Uniform(gl, uniforms['directionalLights[' + index + '].direction'], direction.x, direction.y, direction.z);
+    setVec3Uniform(gl, uniforms['directionalLights[' + index + '].color'], color.x, color.y, color.z);
   });
 
   objects.map(renderObject);
