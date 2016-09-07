@@ -16,6 +16,16 @@ function playSound(sound, delay, destination) {
   source.start(delay ? audioContext.currentTime + delay : 0);
 }
 
+function playSoundArray(destination) {
+  return function(array) {
+    array.map(function(note) {
+      var sound = note[0];
+      var delay = note[1];
+      playSound(sound, delay, destination);
+    });
+  };
+}
+
 // duration is in seconds.
 function generateAudioBuffer(fn, duration, volume) {
   var length = duration * sampleRate;
@@ -27,6 +37,42 @@ function generateAudioBuffer(fn, duration, volume) {
   }
 
   return buffer;
+}
+
+var noteNames = ['c', 'cs', 'd', 'ds', 'e', 'f', 'fs', 'g', 'gs', 'a', 'as', 'b'];
+
+function toNoteString(note) {
+  var name = noteNames[note % 12];
+  var octave = Math.floor(note / 12) - 1;
+  return name + octave;
+}
+
+function generateNotes(fn, duration, volume) {
+  var notes = {};
+
+  function createNoteProperty(note) {
+    var sound;
+
+    var descriptor = {
+      get: function() {
+        if (!sound) {
+          sound = generateAudioBuffer(fn(toFreq(note)), duration, volume);
+        }
+
+        return sound;
+      },
+    };
+
+    Object.defineProperty(notes, note, descriptor);
+    Object.defineProperty(notes, toNoteString(note), descriptor);
+  }
+
+  // From A1 (21) to A7 (105).
+  for (var i = 21; i <= 105; i++) {
+    createNoteProperty(i);
+  }
+
+  return notes;
 }
 
 var wet = audioContext.createGain();
@@ -41,6 +87,7 @@ const convolver = audioContext.createConvolver();
 convolver.connect(wet);
 
 var master = audioContext.createGain();
+master.gain.value = 0.8;
 master.connect(dry);
 master.connect(convolver);
 
@@ -73,6 +120,7 @@ function renderLowPassOffline(convolver, startFrequency, endFrequency, duration)
     });
 }
 
+// A4 to A3.
 renderLowPassOffline(convolver, 440, 220, 1);
 
 function sin(f) {
@@ -82,17 +130,25 @@ function sin(f) {
 }
 
 export default function() {
-  var buffer = generateAudioBuffer(sin(toFreq(69)), 1, 1);
-  playSound(buffer, 0.5, master);
-  playSound(buffer, 1, master);
+  var buffer = generateNotes(sin, 1, 1);
+
   var buffer2 = generateAudioBuffer(sin(toFreq(69 - 2 * 12)), 0.5, 1);
-  var buffer3 = generateAudioBuffer(sin(toFreq(69 + 2 * 12)), 0.1, 1);
-  var buffer4 = generateAudioBuffer(sin(toFreq(69 + 2 * 12 + 3)), 0.1, 1);
-  playSound(buffer2, 0.75, master);
-  playSound(buffer2, 1.25, master);
-  playSound(buffer3, 1.5, master);
-  playSound(buffer3, 1.5 + (1/16), master);
-  playSound(buffer3, 1.5 + (1/32), master);
-  playSound(buffer3, 1.5 + (3/16), master);
-  playSound(buffer4, 1.5 + (1/8), master);
+  var buffer3 = generateAudioBuffer(sin(toFreq(69 + 2 * 12)), 0.1, 0.5);
+  var buffer4 = generateAudioBuffer(sin(toFreq(69 + 2 * 12 + 3)), 0.1, 0.5);
+
+  playSoundArray(master)([
+    [buffer.a4, 0.5],
+    [buffer2, 0.75],
+    [buffer.d4, 0.875],
+    [buffer.a4, 1],
+    [buffer.e4, 1.125],
+    [buffer2, 1.25],
+    [buffer.a4, 1.5],
+    [buffer.f4, 1.625],
+    [buffer3, 1.5],
+    [buffer3, 1.5 + (1/16)],
+    [buffer3, 1.5 + (1/32)],
+    [buffer3, 1.5 + (3/16)],
+    [buffer4, 1.5 + (1/8)],
+  ]);
 }
