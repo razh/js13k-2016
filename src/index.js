@@ -53,7 +53,20 @@ box2._bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), box2);
 var mesh2 = mesh_create(box2, boxMaterial);
 mesh2.position.x = 2;
 
-var objects = [mesh, mesh2];
+var group = object3d_create();
+var boxCount = 144;
+group.position.x = -Math.sqrt(boxCount) / 2;
+group.position.z = -Math.sqrt(boxCount) / 2;
+for (var i = 0; i < boxCount; i++) {
+  var box3 = boxGeom_create(0.5, 0.25, 0.5);
+  box3._bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), box3);
+  var mesh3 = mesh_create(box3, boxMaterial);
+  mesh3.position.x = Math.floor(i / Math.sqrt(boxCount));
+  mesh3.position.z = i % Math.sqrt(boxCount);
+  object3d_add(group, mesh3);
+}
+
+var objects = [mesh, mesh2, group];
 
 var camera = camera_create(60, window.innerWidth / window.innerHeight);
 
@@ -68,6 +81,7 @@ var directionalLights = [light];
 var scene = object3d_create();
 object3d_add(scene, mesh);
 object3d_add(scene, mesh2);
+object3d_add(scene, group);
 object3d_add(scene, camera);
 object3d_add(scene, light);
 
