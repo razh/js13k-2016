@@ -20,6 +20,7 @@ import {
   vec3_create,
   vec3_multiplyScalar,
   vec3_setFromMatrixPosition,
+  vec3_set,
   vec3_sub,
   vec3_transformDirection,
 } from './vec3';
@@ -31,10 +32,14 @@ import playAudio from './audio';
 import vs from './shaders/phong_vert.glsl';
 import fs from './shaders/phong_frag.glsl';
 
+var boxMaterial = material_create();
+vec3_set(boxMaterial.color, 1, 0.4, 0.8);
+vec3_set(boxMaterial.specular, 1, 1, 1);
+
 var box = boxGeom_create(1, 1, 1);
 alignBoxVertices(box, 'px_py');
 box._bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), box);
-var mesh = mesh_create(box, material_create());
+var mesh = mesh_create(box, boxMaterial);
 quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, -Math.PI / 6));
 
 var box2 = boxGeom_create(1, 4, 1);
@@ -44,7 +49,7 @@ alignBoxVertices(box2, 'px');
 applyDefaultVertexColors(box2, [1, 1, 1]);
 applyBoxVertexColors(box2, { py: [0.5, 0, 1] });
 box2._bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), box2);
-var mesh2 = mesh_create(box2, material_create());
+var mesh2 = mesh_create(box2, boxMaterial);
 mesh2.position.x = 2;
 
 var objects = [mesh, mesh2];
@@ -90,11 +95,6 @@ function render(t) {
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  setVec3Uniform(gl, program, 'diffuse', 1, 0.4, 0.8);
-  setVec3Uniform(gl, program, 'specular', 1, 1, 1);
-  setFloatUniform(gl, program, 'shininess', 30);
-  setVec3Uniform(gl, program, 'emissive', 0, 0, 0);
-
   setVec3Uniform(gl, program, 'ambientLightColor', 0.5, 0.5, 0.9);
 
   directionalLights.map(function(light, index) {
@@ -111,6 +111,16 @@ function render(t) {
   });
 
   objects.map(function(object) {
+    var material = object.material;
+    var diffuse = material.color;
+    var specular = material.specular;
+    var emissive = material.emissive;
+
+    setVec3Uniform(gl, program, 'diffuse', diffuse.x, diffuse.y, diffuse.z);
+    setVec3Uniform(gl, program, 'specular', specular.x, specular.y, specular.z);
+    setFloatUniform(gl, program, 'shininess', material.shininess);
+    setVec3Uniform(gl, program, 'emissive', emissive.x, emissive.y, emissive.z);
+
     mat4_multiplyMatrices(object.modelViewMatrix, camera.matrixWorldInverse, object.matrixWorld);
 
     setMat4Uniform(gl, program, 'modelViewMatrix', object.modelViewMatrix);
