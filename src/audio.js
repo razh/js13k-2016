@@ -1,4 +1,5 @@
 var AudioContext = window.AudioContext || window.webkitAudioContext;
+var OfflineAudioContext = window.OfflineAudioContext || window.webkitOfflineAudioContext;
 var audioContext = new AudioContext();
 var sampleRate = audioContext.sampleRate;
 
@@ -83,7 +84,7 @@ var dry = audioContext.createGain();
 dry.gain.value = 1 - wet.gain.value;
 dry.connect(audioContext.destination);
 
-const convolver = audioContext.createConvolver();
+var convolver = audioContext.createConvolver();
 convolver.connect(wet);
 
 var master = audioContext.createGain();
@@ -114,10 +115,20 @@ function renderLowPassOffline(convolver, startFrequency, endFrequency, duration)
   offlineBufferSource.connect(offlineFilter);
   offlineBufferSource.start();
 
-  offlineCtx.startRendering()
-    .then(function(buffer) {
+  var render = offlineCtx.startRendering();
+
+  // https://developer.mozilla.org/en-US/docs/Web/API/OfflineAudioContext/startRendering
+  if (render !== undefined) {
+    // Promises.
+    render.then(function(buffer) {
       convolver.buffer = buffer;
     });
+  } else {
+    // Callbacks.
+    offlineCtx.oncomplete = function(event) {
+      convolver.buffer = event.renderedBuffer;
+    };
+  }
 }
 
 // A4 to A3.
