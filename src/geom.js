@@ -68,9 +68,9 @@ export function geom_merge(a, b) {
     Object.assign(faceCopy.color, face.color);
 
     for (var j = 0; j < face.vertexColors.length; j++) {
-      faceCopy.vertexColors.push(vec3_clone(face.VertexColors[j]));
+      faceCopy.vertexColors.push(vec3_clone(face.vertexColors[j]));
     }
 
-    a.faces.push(face);
+    a.faces.push(faceCopy);
   }
 }
