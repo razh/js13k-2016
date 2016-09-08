@@ -77,7 +77,7 @@ for (var i = 0; i < boxCount; i++) {
 var cylinder = cylinderGeom_create(1, 1, 4, 8, 1);
 var mesh4 = mesh_create(cylinder, boxMaterial);
 
-var worm = worm_create(8, 0.5, 0.5, 1, 0.25);
+var worm = worm_create(8, 0.5, 0.5, 1, 0.2);
 
 var camera = camera_create(60, window.innerWidth / window.innerHeight);
 vec3_set(camera.position, 4, 2, 8);
