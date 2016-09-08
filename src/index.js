@@ -58,7 +58,9 @@ var boxCount = 144;
 group.position.x = -Math.sqrt(boxCount) / 2;
 group.position.z = -Math.sqrt(boxCount) / 2;
 for (var i = 0; i < boxCount; i++) {
-  var box3 = boxGeom_create(0.5, 0.25, 0.5);
+  var box3 = boxGeom_create(0.75, 0.2, 0.75);
+  applyDefaultVertexColors(box3, [1, 1, 1]);
+  applyBoxVertexColors(box3, { ny: [0.5, 0, 0.7] });
   var mesh3 = mesh_create(box3, boxMaterial);
   mesh3.position.x = Math.floor(i / Math.sqrt(boxCount));
   mesh3.position.z = i % Math.sqrt(boxCount);
@@ -66,10 +68,7 @@ for (var i = 0; i < boxCount; i++) {
 }
 
 var camera = camera_create(60, window.innerWidth / window.innerHeight);
-
-camera.position.x = 4;
-camera.position.y = 2;
-camera.position.z = 8;
+vec3_set(camera.position, 4, 2, 8);
 camera_lookAt(camera, vec3_create());
 
 var ambientLightColor = vec3_create(0.5, 0.5, 0.9);
