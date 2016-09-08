@@ -136,30 +136,98 @@ renderLowPassOffline(convolver, 440, 220, 1);
 
 function sin(f) {
   return function(t) {
-    return Math.sin(t * 2 * Math.PI * f) * Math.exp(-t * 32);
+    return Math.sin(t * 2 * Math.PI * f);
   };
 }
 
-export default function() {
-  var buffer = generateNotes(sin, 1, 1);
+function saw(f) {
+  return function(t) {
+    var n = ((t % (1 / f)) * f) % 1;
+    return -1 + 2 * n;
+  };
+}
 
-  var buffer2 = generateAudioBuffer(sin(toFreq(69 - 2 * 12)), 0.5, 1);
-  var buffer3 = generateAudioBuffer(sin(toFreq(69 + 2 * 12)), 0.1, 0.5);
-  var buffer4 = generateAudioBuffer(sin(toFreq(69 + 2 * 12 + 3)), 0.1, 0.5);
+function tri(f) {
+  return function(t) {
+    const n = ((t % (1 / f)) * f) % 1;
+    return n < 0.5 ? -1 + (2 * (2 * n)) : 1 - (2 * (2 * n));
+  };
+}
+
+function square(f) {
+  return function(t) {
+    const n = ((t % (1 / f)) * f) % 1;
+    return n > 0.5 ? 1 : -1;
+  };
+}
+
+function decay(d) {
+  return function() {
+    return function(t) {
+      return Math.exp(-t * d);
+    };
+  };
+}
+
+function mul(a, b) {
+  return function(f) {
+    var af = a(f);
+    var bf = b(f);
+
+    return function(t) {
+      return af(t) * bf(t);
+    };
+  };
+}
+
+var W = 1;
+var H = W / 2;
+var Q = H / 2;
+var E = Q / 2;
+var S = E / 2;
+var T = S / 2;
+
+export default function() {
+  var syn = generateNotes(mul(sin, decay(32)), 1, 1);
+  var kick = generateNotes(mul(sin, decay(64)), 0.5, 1);
+  var blip = generateNotes(mul(sin, decay(32)), 0.1, 0.5);
 
   playSoundArray(master)([
-    [buffer.a4, 0.5],
-    [buffer2, 0.75],
-    [buffer.d4, 0.875],
-    [buffer.a4, 1],
-    [buffer.e4, 1.125],
-    [buffer2, 1.25],
-    [buffer.a4, 1.5],
-    [buffer.f4, 1.625],
-    [buffer3, 1.5],
-    [buffer3, 1.5 + (1/16)],
-    [buffer3, 1.5 + (1/32)],
-    [buffer3, 1.5 + (3/16)],
-    [buffer4, 1.5 + (1/8)],
+    // Kick
+    [kick.a2, H + Q],
+
+    [kick.a2, W + Q],
+    [kick.a2, W + H + Q],
+
+    [kick.a2, 2 * W + Q],
+    [kick.a2, 2 * W + H + Q],
+
+    [kick.a2, 3 * W + Q],
+    [kick.a2, 3 * W + H + Q],
+
+    [kick.a2, 4 * W + Q],
+
+    // Synth
+    [syn.a4, H],
+    [syn.d4, H + Q + E],
+
+    [syn.a4, W],
+    [syn.e4, W + E],
+    [syn.a4, W + H],
+    [syn.f4, W + H + E],
+
+    [syn.d4, 2 * W + H],
+    [syn.g3, 2 * W + H + Q + E],
+
+    [syn.d4, 3 * W],
+    [syn.a3, 3 * W + E],
+    [syn.d4, 3 * W + H],
+    [syn.as3, 3 * W + H + E],
+
+    [blip.a6, W + H],
+    [blip.a6, W + H + T],
+    [blip.a6, W + H + S],
+    [blip.c7, W + H + E],
+    [blip.a6, W + H + E + S],
   ]);
 }
