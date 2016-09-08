@@ -11,10 +11,21 @@
       background: #000;
       overflow: hidden;
     }
+
+    #t {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font: 16vw Futura;
+      color: #fff;
+      text-shadow: 0.1em 0.1em rgba(0, 0, 0, 0.5);
+    }
   </style>
 </head>
 <body>
   <canvas id="c"></canvas>
+  <div id="t">GLITCH</div>
   <script src="./bundle.js"></script>
 </body>
 </html>
