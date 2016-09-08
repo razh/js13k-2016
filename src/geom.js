@@ -1,5 +1,5 @@
 import { face3_create } from './face3';
-import { vec3_create, vec3_add, vec3_set } from './vec3';
+import { vec3_create, vec3_clone, vec3_add, vec3_set } from './vec3';
 
 export function geom_create() {
   return {
@@ -48,3 +48,29 @@ export var geom_translate = (function() {
     return geom;
   };
 }());
+
+export function geom_merge(a, b) {
+  var vertexOffset = a.vertices.length;
+
+  var i;
+  for (i = 0; i < b.vertices.length; i++) {
+    a.vertices.push(vec3_clone(b.vertices[i]));
+  }
+
+  for (i = 0; i < b.faces.length; i++) {
+    var face = b.faces[i];
+    var faceCopy = face3_create(
+      face.a + vertexOffset,
+      face.b + vertexOffset,
+      face.c + vertexOffset
+    );
+
+    Object.assign(faceCopy.color, face.color);
+
+    for (var j = 0; j < face.vertexColors.length; j++) {
+      faceCopy.vertexColors.push(vec3_clone(face.VertexColors[j]));
+    }
+
+    a.faces.push(face);
+  }
+}
