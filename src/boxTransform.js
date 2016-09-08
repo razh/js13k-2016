@@ -6,6 +6,7 @@ import {
   vec3_fromArray,
   vec3_setScalar,
 } from './vec3';
+import { rearg } from './utils';
 
 function transformBoxVertices(method) {
   var vector = vec3_create();
@@ -41,3 +42,6 @@ function transformBoxVertices(method) {
 
 export var translateBoxVertices = transformBoxVertices(vec3_add);
 export var scaleBoxVertices = transformBoxVertices(vec3_multiply);
+
+export var translate = rearg(translateBoxVertices);
+export var scale = rearg(scaleBoxVertices);

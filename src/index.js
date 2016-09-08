@@ -28,10 +28,11 @@ import {
   vec3_sub,
   vec3_transformDirection,
 } from './vec3';
-import { alignBoxVertices } from './boxAlign';
-import { applyBoxVertexColors, applyDefaultVertexColors } from './boxColors';
-import { scaleBoxVertices } from './boxTransform';
+import { align } from './boxAlign';
+import { colors, defaultColors } from './boxColors';
+import { scale } from './boxTransform';
 import { worm_create } from './worm';
+import { compose } from './utils';
 import playAudio from './audio';
 
 import vs from './shaders/phong_vert.glsl';
@@ -42,16 +43,18 @@ vec3_set(boxMaterial.color, 1, 0.4, 0.8);
 vec3_set(boxMaterial.specular, 1, 1, 1);
 
 var box = boxGeom_create(1, 1, 1);
-alignBoxVertices(box, 'px_py');
+align('px_py')(box);
 var mesh = mesh_create(box, boxMaterial);
 quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, -Math.PI / 6));
 
 var box2 = boxGeom_create(1, 4, 1);
-alignBoxVertices(box2, 'py');
-scaleBoxVertices(box2, { py: 0 });
-alignBoxVertices(box2, 'px');
-applyDefaultVertexColors(box2, [1, 1, 1]);
-applyBoxVertexColors(box2, { py: [0.5, 0, 1] });
+compose(
+  align('py'),
+  scale({ py: 0 }),
+  align('px'),
+  defaultColors([1, 1, 1]),
+  colors({ py: [0.5, 0, 1] })
+)(box2);
 var mesh2 = mesh_create(box2, boxMaterial);
 mesh2.position.x = 2;
 
@@ -61,8 +64,10 @@ group.position.x = -Math.sqrt(boxCount) / 2;
 group.position.z = -Math.sqrt(boxCount) / 2;
 for (var i = 0; i < boxCount; i++) {
   var box3 = boxGeom_create(0.75, 0.2, 0.75);
-  applyDefaultVertexColors(box3, [1, 1, 1]);
-  applyBoxVertexColors(box3, { ny: [0.5, 0, 0.7] });
+  compose(
+    defaultColors([1, 1, 1]),
+    colors({ ny: [0.5, 0, 0.7] })
+  )(box3);
   var mesh3 = mesh_create(box3, boxMaterial);
   mesh3.position.x = Math.floor(i / Math.sqrt(boxCount));
   mesh3.position.z = i % Math.sqrt(boxCount);

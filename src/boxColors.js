@@ -1,5 +1,6 @@
 import boxVertexIndices from './boxVertexIndices';
 import { vec3_create, vec3_fromArray } from './vec3';
+import { rearg } from './utils';
 
 function setFaceVertexColor(face, index, color) {
   if (face.a === index) {
@@ -47,3 +48,6 @@ export function applyDefaultVertexColors(geom, defaultColor) {
 
   return geom;
 }
+
+export var colors = rearg(applyBoxVertexColors);
+export var defaultColors = rearg(applyDefaultVertexColors);
