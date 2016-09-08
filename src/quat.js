@@ -7,6 +7,22 @@ export function quat_create(x, y, z, w) {
   };
 }
 
+export function quat_set(q, x, y, z, w) {
+  q.x = x;
+  q.y = y;
+  q.z = z;
+  q.w = w;
+  return q;
+}
+
+export function quat_copy(a, b) {
+  a.x = b.x;
+  a.y = b.y;
+  a.z = b.z;
+  a.w = b.w;
+  return a;
+}
+
 export function quat_multiply(a, b) {
   // from http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/code/index.htm
   var qax = a.x, qay = a.y, qaz = a.z, qaw = a.w;
@@ -94,4 +110,86 @@ export function quat_setFromRotationMatrix(q, m) {
   }
 
   return q;
+}
+
+export function quat_length(q) {
+  return Math.sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
+}
+
+export function quat_normalize(q) {
+  var l = quat_length(q);
+
+  if (!l) {
+    q.x = 0;
+    q.y = 0;
+    q.z = 0;
+    q.w = 1;
+  } else {
+    l = 1 / l;
+
+    q.x = q.x * l;
+    q.y = q.y * l;
+    q.z = q.z * l;
+    q.w = q.w * l;
+  }
+
+  return q;
+}
+
+export function quat_slerp(a, b, t) {
+  if (!t) {
+    return a;
+  }
+
+  if (t === 1) {
+    return quat_copy(a, b);
+  }
+
+  var x = a.x, y = a.y, z = a.z, w = a.w;
+
+  // http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/
+
+  var cosHalfTheta = w * b.w + x * b.x + y * b.y + z * b.z;
+
+  if (cosHalfTheta < 0) {
+    a.w = - b.w;
+    a.x = - b.x;
+    a.y = - b.y;
+    a.z = - b.z;
+
+    cosHalfTheta = - cosHalfTheta;
+  } else {
+    quat_copy(a, b);
+  }
+
+  if (cosHalfTheta >= 1) {
+    a.w = w;
+    a.x = x;
+    a.y = y;
+    a.z = z;
+
+    return a;
+  }
+
+  var sinHalfTheta = Math.sqrt(1 - cosHalfTheta * cosHalfTheta);
+
+  if (Math.abs(sinHalfTheta) < 0.001) {
+    a.w = 0.5 * (w + a.w);
+    a.x = 0.5 * (x + a.x);
+    a.y = 0.5 * (y + a.y);
+    a.z = 0.5 * (z + a.z);
+
+    return a;
+  }
+
+  var halfTheta = Math.atan2(sinHalfTheta, cosHalfTheta);
+  var ratioA = Math.sin((1 - t) * halfTheta) / sinHalfTheta;
+  var ratioB = Math.sin(t * halfTheta) / sinHalfTheta;
+
+  a.w = (w * ratioA + a.w * ratioB);
+  a.x = (x * ratioA + a.x * ratioB);
+  a.y = (y * ratioA + a.y * ratioB);
+  a.z = (z * ratioA + a.z * ratioB);
+
+  return a;
 }
