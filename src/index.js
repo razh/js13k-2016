@@ -3,6 +3,7 @@
 import { boxGeom_create } from './boxGeom';
 import { bufferGeom_create, bufferGeom_fromGeom } from './bufferGeom';
 import { camera_create, camera_lookAt, camera_updateProjectionMatrix } from './camera';
+import { cylinderGeom_create } from './cylinderGeom';
 import { directionalLight_create } from './directionalLight';
 import { mat4_getInverse, mat4_multiplyMatrices } from './mat4';
 import { material_create } from './material';
@@ -30,6 +31,7 @@ import {
 import { alignBoxVertices } from './boxAlign';
 import { applyBoxVertexColors, applyDefaultVertexColors } from './boxColors';
 import { scaleBoxVertices } from './boxTransform';
+import { worm_create } from './worm';
 import playAudio from './audio';
 
 import vs from './shaders/phong_vert.glsl';
@@ -67,6 +69,11 @@ for (var i = 0; i < boxCount; i++) {
   object3d_add(group, mesh3);
 }
 
+var cylinder = cylinderGeom_create(1, 1, 4, 8, 1);
+var mesh4 = mesh_create(cylinder, boxMaterial);
+
+var worm = worm_create(8, 0.5, 0.5, 1, 0.25);
+
 var camera = camera_create(60, window.innerWidth / window.innerHeight);
 vec3_set(camera.position, 4, 2, 8);
 camera_lookAt(camera, vec3_create());
@@ -80,6 +87,8 @@ var scene = object3d_create();
 object3d_add(scene, mesh);
 object3d_add(scene, mesh2);
 object3d_add(scene, group);
+object3d_add(scene, mesh4);
+object3d_add(scene, worm);
 object3d_add(scene, camera);
 object3d_add(scene, light);
 
