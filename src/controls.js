@@ -1,6 +1,7 @@
-import { quat_create, quat_set, quat_normalize, quat_multiply } from './quat';
+import { quat_create, quat_copy, quat_set, quat_normalize, quat_multiply } from './quat';
 
-var quat = quat_create();
+var pitchQuat = quat_create();
+var yawQuat = quat_create();
 
 export function controls_create(object) {
   var controls = {
@@ -21,8 +22,13 @@ export function controls_create(object) {
       var pitch = -movementY * controls.sensitivity;
       var yaw = -movementX * controls.sensitivity;
 
-      quat_normalize(quat_set(quat, pitch, yaw, 0, 1));
-      quat_multiply(object.quaternion, quat);
+      quat_normalize(quat_set(pitchQuat, pitch, 0, 0, 1));
+      quat_normalize(quat_set(yawQuat, 0, yaw, 0, 1));
+
+      // pitch * object * yaw
+      quat_multiply(object.quaternion, pitchQuat);
+      quat_multiply(yawQuat, object.quaternion);
+      quat_copy(object.quaternion, yawQuat);
     },
   };
 
