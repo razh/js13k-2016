@@ -122,6 +122,41 @@ var uniforms = getUniformLocations(gl, program);
 
 gl.useProgram(program);
 
+var pt;
+var cameraDirection = vec3_create();
+
+function updateObject(object, dt) {
+  if (object.update) {
+    object.update(dt);
+  }
+
+  object.children.map(function(child) {
+    updateObject(child, dt);
+  });
+}
+
+function update(t) {
+  t = (t || 0) * 1e-3;
+  if (!pt) {
+    pt = t;
+  }
+
+  var dt = t - pt;
+  pt = t;
+
+  vec3_applyQuaternion(vec3_set(cameraDirection, 0, 0, -dt * 2), camera.quaternion);
+  vec3_add(camera.position, cameraDirection);
+
+  mesh.position.x = Math.cos(t);
+  quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, t + 1));
+  light.position.x = Math.cos(t) * 3;
+  light.position.z = Math.sin(t) * 3;
+
+  scene.children.map(function(object) {
+    updateObject(object, dt);
+  });
+}
+
 function setFloat32AttributeBuffer(name, location, bufferGeom, size) {
   var buffer = (
     bufferGeom.buffers[name] ||
@@ -163,26 +198,9 @@ function renderObject(object) {
   object.children.map(renderObject);
 }
 
-var direction = vec3_create();
-
-var pt;
-
 function render(t) {
-  t = (t || 0) * 1e-3;
-  if (!pt) {
-    pt = t;
-  }
+  update(t);
 
-  var dt = t - pt;
-  pt = t;
-
-  vec3_applyQuaternion(vec3_set(direction, 0, 0, -dt * 2), camera.quaternion);
-  vec3_add(camera.position, direction);
-
-  mesh.position.x = Math.cos(t);
-  quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, t + 1));
-  light.position.x = Math.cos(t) * 3;
-  light.position.z = Math.sin(t) * 3;
   object3d_updateMatrixWorld(scene);
   mat4_getInverse(camera.matrixWorldInverse, camera.matrixWorld);
 
