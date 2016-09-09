@@ -25,8 +25,10 @@ import {
   vec3_multiplyScalar,
   vec3_setFromMatrixPosition,
   vec3_set,
+  vec3_add,
   vec3_sub,
   vec3_transformDirection,
+  vec3_applyQuaternion,
 } from './vec3';
 import { align } from './boxAlign';
 import { colors, defaultColors } from './boxColors';
@@ -153,8 +155,21 @@ function renderObject(object) {
   object.children.map(renderObject);
 }
 
+var direction = vec3_create();
+
+var pt;
+
 function render(t) {
   t = (t || 0) * 1e-3;
+  if (!pt) {
+    pt = t;
+  }
+
+  var dt = t - pt;
+  pt = t;
+
+  vec3_applyQuaternion(vec3_set(direction, 0, 0, -dt * 2), camera.quaternion);
+  vec3_add(camera.position, direction);
 
   mesh.position.x = Math.cos(t);
   quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, t + 1));
