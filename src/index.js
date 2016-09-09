@@ -3,7 +3,7 @@
 import { boxGeom_create } from './boxGeom';
 import { bufferGeom_create, bufferGeom_fromGeom } from './bufferGeom';
 import { camera_create, camera_lookAt, camera_updateProjectionMatrix } from './camera';
-import { cylinderGeom_create } from './cylinderGeom';
+import { cylinderGeom_create, cylinderGeom_colorTop } from './cylinderGeom';
 import { directionalLight_create } from './directionalLight';
 import { mat4_getInverse, mat4_multiplyMatrices } from './mat4';
 import { material_create } from './material';
@@ -79,6 +79,8 @@ for (var i = 0; i < boxCount; i++) {
 }
 
 var cylinder = cylinderGeom_create(1, 1, 4, 8, 1);
+defaultColors([0, 0, 0])(cylinder);
+cylinderGeom_colorTop(cylinder, [1, 1, 1]);
 var mesh4 = mesh_create(cylinder, boxMaterial);
 
 var worm = worm_create(8, 0.5, 0.5, 1, 0.2);
@@ -124,6 +126,7 @@ gl.useProgram(program);
 
 var pt;
 var cameraDirection = vec3_create();
+var cameraSpeed = 2;
 
 function updateObject(object, dt) {
   if (object.update) {
@@ -144,7 +147,7 @@ function update(t) {
   var dt = t - pt;
   pt = t;
 
-  vec3_applyQuaternion(vec3_set(cameraDirection, 0, 0, -dt * 2), camera.quaternion);
+  vec3_applyQuaternion(vec3_set(cameraDirection, 0, 0, -dt * cameraSpeed), camera.quaternion);
   vec3_add(camera.position, cameraDirection);
 
   mesh.position.x = Math.cos(t);

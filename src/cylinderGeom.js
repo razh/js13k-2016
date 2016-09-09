@@ -1,4 +1,6 @@
 import { geom_create, geom_push } from './geom';
+import { vec3_create, vec3_fromArray } from './vec3';
+import { setFaceVertexColor } from './boxColors';
 
 export function cylinderGeom_create(
   radiusTop,
@@ -90,4 +92,47 @@ export function cylinderGeom_create(
   }
 
   return geom_push(geom_create(), vertices, faces);
+}
+
+// These color functions need to be called before modifying vertices. They
+// assume that the top and bottom vertices have positive and negative Y
+// components respectively.
+function getCylinderCapVertexIndices(cylinderGeom, sign) {
+  return cylinderGeom.vertices.reduce(function(indices, vertex, index) {
+    var y = vertex.y;
+
+    var vertexSign = 0;
+    if (y > 0) {
+      vertexSign = 1;
+    } else if (y < 0) {
+      vertexSign = -1;
+    }
+
+    if (vertexSign === sign) {
+      indices.push(index);
+    }
+
+    return indices;
+  }, []);
+}
+
+function cylinderGeom_colorCap(cylinderGeom, color, sign) {
+  color = vec3_fromArray(vec3_create(), color);
+  var indices = getCylinderCapVertexIndices(cylinderGeom, sign);
+
+  cylinderGeom.faces.map(function(face) {
+    indices.map(function(index) {
+      setFaceVertexColor(face, index, color);
+    });
+  });
+
+  return cylinderGeom;
+}
+
+export function cylinderGeom_colorTop(cylinderGeom, color) {
+  return cylinderGeom_colorCap(cylinderGeom, color, 1);
+}
+
+export function cylinderGeom_colorBottom(cylinderGeom, color) {
+  return cylinderGeom_colorCap(cylinderGeom, color, -1);
 }
