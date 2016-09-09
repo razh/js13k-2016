@@ -44,9 +44,9 @@ import { pointerLock_create } from './pointerLock';
 import { compose } from './utils';
 import playAudio from './audio';
 
-import vs from './shaders/phong_vert.glsl';
+// import vs from './shaders/phong_vert.glsl';
 // import fs from './shaders/phong_frag.glsl';
-import { frag } from './phong';
+import { vert, frag } from './phong';
 
 var boxMaterial = material_create();
 vec3_set(boxMaterial.color, 1, 0.4, 0.8);
@@ -126,7 +126,7 @@ gl.enable(gl.DEPTH_TEST);
 gl.enable(gl.CULL_FACE);
 gl.getExtension('OES_standard_derivatives');
 
-var program = createShaderProgram(gl, vs, frag(directionalLights.length));
+var program = createShaderProgram(gl, vert(), frag(directionalLights.length));
 
 var attributes = getAttributeLocations(gl, program);
 var uniforms = getUniformLocations(gl, program);
