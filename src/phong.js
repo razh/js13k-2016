@@ -1,4 +1,4 @@
-export function frag() {
+export function frag(directionalLightCount) {
   return (
     '#extension GL_OES_standard_derivatives : enable' + '\n' +
 
@@ -75,7 +75,7 @@ export function frag() {
       'vec3 color;' +
     '};' +
 
-    'uniform DirectionalLight directionalLights[1];' +
+    'uniform DirectionalLight directionalLights[' + directionalLightCount + '];' +
     'void getDirectionalDirectLightIrradiance(const in DirectionalLight directionalLight, const in GeometricContext geometry, out IncidentLight directLight) {' +
       'directLight.color = directionalLight.color;' +
       'directLight.direction = directionalLight.direction;' +
@@ -122,9 +122,20 @@ export function frag() {
       'IncidentLight directLight;' +
 
       'DirectionalLight directionalLight;' +
-      'directionalLight = directionalLights[0];' +
-      'getDirectionalDirectLightIrradiance(directionalLight, geometry, directLight);' +
-      'RE_Direct_BlinnPhong(directLight, geometry, material, reflectedLight);' +
+
+      (function() {
+        var chunk = '';
+
+        for (var i = 0; i < directionalLightCount; i++) {
+          chunk += (
+            'directionalLight = directionalLights[' + i + '];' +
+            'getDirectionalDirectLightIrradiance(directionalLight, geometry, directLight);' +
+            'RE_Direct_BlinnPhong(directLight, geometry, material, reflectedLight);'
+          );
+        }
+
+        return chunk;
+      }()) +
 
       'vec3 irradiance = getAmbientLightIrradiance(ambientLightColor);' +
       'RE_IndirectDiffuse_BlinnPhong(irradiance, geometry, material, reflectedLight);' +

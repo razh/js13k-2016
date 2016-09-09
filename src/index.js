@@ -45,7 +45,8 @@ import { compose } from './utils';
 import playAudio from './audio';
 
 import vs from './shaders/phong_vert.glsl';
-import fs from './shaders/phong_frag.glsl';
+// import fs from './shaders/phong_frag.glsl';
+import { frag } from './phong';
 
 var boxMaterial = material_create();
 vec3_set(boxMaterial.color, 1, 0.4, 0.8);
@@ -102,7 +103,9 @@ var fogFar = 20;
 var ambientLightColor = vec3_create(0.5, 0.5, 0.9);
 
 var light = directionalLight_create(vec3_create(1, 0.5, 0.5));
-var directionalLights = [light];
+var light2 = directionalLight_create(vec3_create(0.2, 0.3, 0.5));
+vec3_set(light2.position, -2, 2, -2);
+var directionalLights = [light, light2];
 
 var scene = object3d_create();
 object3d_add(scene, mesh);
@@ -112,6 +115,7 @@ object3d_add(scene, mesh4);
 object3d_add(scene, worm);
 object3d_add(scene, camera);
 object3d_add(scene, light);
+object3d_add(scene, light2);
 
 c.width = window.innerWidth;
 c.height = window.innerHeight;
@@ -122,7 +126,7 @@ gl.enable(gl.DEPTH_TEST);
 gl.enable(gl.CULL_FACE);
 gl.getExtension('OES_standard_derivatives');
 
-var program = createShaderProgram(gl, vs, fs);
+var program = createShaderProgram(gl, vs, frag(directionalLights.length));
 
 var attributes = getAttributeLocations(gl, program);
 var uniforms = getUniformLocations(gl, program);
