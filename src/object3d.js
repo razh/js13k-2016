@@ -81,6 +81,14 @@ export function object3d_translateZ(obj, distance) {
   return object3d_translateOnAxis(obj, vec3_Z, distance);
 }
 
+export function object3d_traverse(obj, callback) {
+  callback(obj);
+
+  obj.children.map(function(child) {
+    object3d_traverse(child, callback);
+  });
+}
+
 export function object3d_updateMatrix(obj) {
   mat4_compose(obj.matrix, obj.position, obj.quaternion, obj.scale);
 }

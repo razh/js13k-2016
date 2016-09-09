@@ -8,7 +8,12 @@ import { directionalLight_create } from './directionalLight';
 import { mat4_getInverse, mat4_multiplyMatrices } from './mat4';
 import { material_create } from './material';
 import { mesh_create } from './mesh';
-import { object3d_create, object3d_add, object3d_updateMatrixWorld } from './object3d';
+import {
+  object3d_create,
+  object3d_add,
+  object3d_traverse,
+  object3d_updateMatrixWorld,
+} from './object3d';
 import { quat_setFromEuler } from './quat';
 import {
   createShaderProgram,
@@ -128,16 +133,6 @@ var pt;
 var cameraDirection = vec3_create();
 var cameraSpeed = 2;
 
-function updateObject(object, dt) {
-  if (object.update) {
-    object.update(dt);
-  }
-
-  object.children.map(function(child) {
-    updateObject(child, dt);
-  });
-}
-
 function update(t) {
   t = (t || 0) * 1e-3;
   if (!pt) {
@@ -155,8 +150,10 @@ function update(t) {
   light.position.x = Math.cos(t) * 3;
   light.position.z = Math.sin(t) * 3;
 
-  scene.children.map(function(object) {
-    updateObject(object, dt);
+  object3d_traverse(scene, function(object) {
+    if (object.update) {
+      object.update(dt);
+    }
   });
 }
 
@@ -169,36 +166,32 @@ function setFloat32AttributeBuffer(name, location, bufferGeom, size) {
   setFloat32Attribute(gl, location, buffer, size);
 }
 
-function renderObject(object) {
-  if (object.geometry && object.material) {
-    var geometry = object.geometry;
-    var material = object.material;
+function renderMesh(mesh) {
+  var geometry = mesh.geometry;
+  var material = mesh.material;
 
-    setVec3Uniform(gl, uniforms.fogColor, fogColor);
-    setFloatUniform(gl, uniforms.fogNear, fogNear);
-    setFloatUniform(gl, uniforms.fogFar, fogFar);
+  setVec3Uniform(gl, uniforms.fogColor, fogColor);
+  setFloatUniform(gl, uniforms.fogNear, fogNear);
+  setFloatUniform(gl, uniforms.fogFar, fogFar);
 
-    setVec3Uniform(gl, uniforms.diffuse, material.color);
-    setVec3Uniform(gl, uniforms.specular, material.specular);
-    setFloatUniform(gl, uniforms.shininess, material.shininess);
-    setVec3Uniform(gl, uniforms.emissive, material.emissive);
+  setVec3Uniform(gl, uniforms.diffuse, material.color);
+  setVec3Uniform(gl, uniforms.specular, material.specular);
+  setFloatUniform(gl, uniforms.shininess, material.shininess);
+  setVec3Uniform(gl, uniforms.emissive, material.emissive);
 
-    mat4_multiplyMatrices(object.modelViewMatrix, camera.matrixWorldInverse, object.matrixWorld);
+  mat4_multiplyMatrices(mesh.modelViewMatrix, camera.matrixWorldInverse, mesh.matrixWorld);
 
-    setMat4Uniform(gl, uniforms.modelViewMatrix, object.modelViewMatrix);
-    setMat4Uniform(gl, uniforms.projectionMatrix, camera.projectionMatrix);
+  setMat4Uniform(gl, uniforms.modelViewMatrix, mesh.modelViewMatrix);
+  setMat4Uniform(gl, uniforms.projectionMatrix, camera.projectionMatrix);
 
-    if (!geometry._bufferGeom) {
-      geometry._bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), geometry);
-    }
-
-    setFloat32AttributeBuffer('position', attributes.position, geometry._bufferGeom, 3);
-    setFloat32AttributeBuffer('color', attributes.color, geometry._bufferGeom, 3);
-
-    gl.drawArrays(gl.TRIANGLES, 0, geometry._bufferGeom.attrs.position.length / 3);
+  if (!geometry._bufferGeom) {
+    geometry._bufferGeom = bufferGeom_fromGeom(bufferGeom_create(), geometry);
   }
 
-  object.children.map(renderObject);
+  setFloat32AttributeBuffer('position', attributes.position, geometry._bufferGeom, 3);
+  setFloat32AttributeBuffer('color', attributes.color, geometry._bufferGeom, 3);
+
+  gl.drawArrays(gl.TRIANGLES, 0, geometry._bufferGeom.attrs.position.length / 3);
 }
 
 function render(t) {
@@ -224,7 +217,11 @@ function render(t) {
     setVec3Uniform(gl, uniforms['directionalLights[' + index + '].color'], color);
   });
 
-  scene.children.map(renderObject);
+  object3d_traverse(scene, function(object) {
+    if (object.geometry && object.material) {
+      renderMesh(object);
+    }
+  });
 
   requestAnimationFrame(render);
 }
