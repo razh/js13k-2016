@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/razh/js13k-2016#readme",
   "devDependencies": {
-    "browser-sync": "2.14.3",
+    "browser-sync": "2.15.0",
     "del": "2.2.2",
     "eslint": "3.4.0",
     "gulp": "3.9.1",
