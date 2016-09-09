@@ -8,7 +8,7 @@ export function controls_create(object) {
     speed: 1,
     turnRate: Math.PI / 4,
     sensitivity: 0.002,
-    enabled: true,
+    enabled: false,
 
     onMouseMove: function(event) {
       if (!controls.enabled) {

@@ -33,6 +33,7 @@ import { colors, defaultColors } from './boxColors';
 import { scale } from './boxTransform';
 import { worm_create } from './worm';
 import { controls_create } from './controls';
+import { pointerLock_create } from './pointerLock';
 import { compose } from './utils';
 import playAudio from './audio';
 
@@ -83,7 +84,7 @@ var worm = worm_create(8, 0.5, 0.5, 1, 0.2);
 var camera = camera_create(60, window.innerWidth / window.innerHeight);
 vec3_set(camera.position, 4, 2, 8);
 camera_lookAt(camera, vec3_create());
-controls_create(camera);
+pointerLock_create(controls_create(camera), c);
 
 var ambientLightColor = vec3_create(0.5, 0.5, 0.9);
 
