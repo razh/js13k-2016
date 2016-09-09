@@ -76,6 +76,20 @@ export function vec3_divideScalar(v, scalar) {
   return vec3_multiplyScalar(v, 1 / scalar);
 }
 
+export function vec3_min(a, b) {
+  a.x = Math.min(a.x, b.x);
+  a.y = Math.min(a.y, b.y);
+  a.z = Math.min(a.z, b.z);
+  return a;
+}
+
+export function vec3_max(a, b) {
+  a.x = Math.max(a.x, b.x);
+  a.y = Math.max(a.y, b.y);
+  a.z = Math.max(a.z, b.z);
+  return a;
+}
+
 export function vec3_cross(a, b) {
   var x = a.x;
   var y = a.y;
@@ -110,6 +124,16 @@ export function vec3_length(v) {
 
 export function vec3_normalize(v) {
   return vec3_divideScalar(v, vec3_length(v));
+}
+
+export function vec3_applyMatrix4(v, m) {
+  var x = v.x, y = v.y, z = v.z;
+
+  v.x = m[0] * x + m[4] * y + m[8] * z + m[12];
+  v.y = m[1] * x + m[5] * y + m[9] * z + m[13];
+  v.z = m[2] * x + m[6] * y + m[10] * z + m[14];
+
+  return v;
 }
 
 export function vec3_applyQuaternion(v, q) {
