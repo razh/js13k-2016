@@ -211,7 +211,6 @@ export default function() {
     [syn.a4, H],
     [syn.d4, H + Q + E],
 
-    [syn.a4, W],
     [syn.e4, W + E],
     [syn.a4, W + H],
     [syn.f4, W + H + E],
@@ -219,7 +218,6 @@ export default function() {
     [syn.d4, 2 * W + H],
     [syn.g3, 2 * W + H + Q + E],
 
-    [syn.d4, 3 * W],
     [syn.a3, 3 * W + E],
     [syn.d4, 3 * W + H],
     [syn.as3, 3 * W + H + E],
