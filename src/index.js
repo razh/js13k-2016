@@ -88,6 +88,10 @@ vec3_set(camera.position, 4, 2, 8);
 camera_lookAt(camera, vec3_create());
 pointerLock_create(controls_create(camera), c);
 
+var fogColor = vec3_create(0, 0, 0);
+var fogNear = 0.1;
+var fogFar = 20;
+
 var ambientLightColor = vec3_create(0.5, 0.5, 0.9);
 
 var light = directionalLight_create(vec3_create(1, 0.5, 0.5));
@@ -131,6 +135,10 @@ function renderObject(object) {
   if (object.geometry && object.material) {
     var geometry = object.geometry;
     var material = object.material;
+
+    setVec3Uniform(gl, uniforms.fogColor, fogColor);
+    setFloatUniform(gl, uniforms.fogNear, fogNear);
+    setFloatUniform(gl, uniforms.fogFar, fogFar);
 
     setVec3Uniform(gl, uniforms.diffuse, material.color);
     setVec3Uniform(gl, uniforms.specular, material.specular);
