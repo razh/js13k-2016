@@ -32,6 +32,7 @@ import {
   vec3_set,
   vec3_add,
   vec3_sub,
+  vec3_normalize,
   vec3_transformDirection,
   vec3_applyQuaternion,
 } from './vec3';
@@ -39,6 +40,7 @@ import { align } from './boxAlign';
 import { colors, defaultColors } from './boxColors';
 import { scale } from './boxTransform';
 import { worm_create } from './worm';
+import { keys_create } from './keys';
 import { controls_create } from './controls';
 import { pointerLock_create } from './pointerLock';
 import { tween_create, tween_update } from './tween';
@@ -96,11 +98,15 @@ tween_create(mesh4.position, {
 });
 
 var worm = worm_create(8, 0.5, 0.5, 1, 0.2);
+var bug = bug_create();
+vec3_set(bug.position, 3, 1, 5);
 
 var camera = camera_create(60, window.innerWidth / window.innerHeight);
 vec3_set(camera.position, 4, 2, 8);
 camera_lookAt(camera, vec3_create());
 pointerLock_create(controls_create(camera), c);
+
+var keys = keys_create();
 
 var fogColor = vec3_create(0, 0, 0);
 var fogNear = 0.1;
@@ -141,7 +147,26 @@ gl.useProgram(program);
 
 var pt;
 var cameraDirection = vec3_create();
-var cameraSpeed = 2;
+
+function updateCamera(dt) {
+  var speed = 2;
+
+  var x = 0;
+  var z = 0;
+
+  if (keys.KeyW || keys.ArrowUp) { z += -1; }
+  if (keys.KeyS || keys.ArrowDown) { z += 1; }
+  if (keys.KeyA || keys.ArrowLeft) { x += -1; }
+  if (keys.KeyD || keys.ArrowRight) { x += 1; }
+
+  if (!x && !z) {
+    return;
+  }
+
+  vec3_multiplyScalar(vec3_normalize(vec3_set(cameraDirection, x, 0, z)), speed * dt);
+  vec3_applyQuaternion(cameraDirection, camera.quaternion);
+  vec3_add(camera.position, cameraDirection);
+}
 
 function update(t) {
   t = (t || 0) * 1e-3;
@@ -153,9 +178,7 @@ function update(t) {
   pt = t;
 
   tween_update();
-
-  vec3_applyQuaternion(vec3_set(cameraDirection, 0, 0, -dt * cameraSpeed), camera.quaternion);
-  vec3_add(camera.position, cameraDirection);
+  updateCamera(dt);
 
   mesh.position.x = Math.cos(t);
   quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, t + 1));
