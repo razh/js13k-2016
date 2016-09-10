@@ -51,6 +51,8 @@ import playAudio from './audio';
 // import fs from './shaders/phong_frag.glsl';
 import { vert, frag } from './phong';
 
+var _vec3 = vec3_create();
+
 var boxMaterial = material_create();
 vec3_set(boxMaterial.color, 1, 0.4, 0.8);
 vec3_set(boxMaterial.specular, 1, 1, 1);
@@ -181,7 +183,7 @@ function update(t) {
   updateCamera(dt);
 
   mesh.position.x = Math.cos(t);
-  quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, t + 1));
+  quat_setFromEuler(mesh.quaternion, vec3_set(_vec3, 0, 0, t + 1));
   light.position.x = Math.cos(t) * 3;
   light.position.z = Math.sin(t) * 3;
 
@@ -229,6 +231,8 @@ function renderMesh(mesh) {
   gl.drawArrays(gl.TRIANGLES, 0, geometry._bufferGeom.attrs.position.length / 3);
 }
 
+var lightDirection = vec3_create();
+
 function render(t) {
   update(t);
 
@@ -240,13 +244,13 @@ function render(t) {
   setVec3Uniform(gl, uniforms.ambientLightColor, ambientLightColor);
 
   directionalLights.map(function(light, index) {
-    var _vec3 = vec3_create();
+    vec3_set(_vec3, 0, 0, 0);
 
-    var direction = vec3_setFromMatrixPosition(vec3_create(), light.matrixWorld);
+    var direction = vec3_setFromMatrixPosition(lightDirection, light.matrixWorld);
     vec3_setFromMatrixPosition(_vec3, light.target.matrixWorld);
     vec3_transformDirection(vec3_sub(direction, _vec3), camera.matrixWorldInverse);
 
-    var color = vec3_multiplyScalar(Object.assign(vec3_create(), light.color), light.intensity);
+    var color = vec3_multiplyScalar(Object.assign(_vec3, light.color), light.intensity);
 
     setVec3Uniform(gl, uniforms['directionalLights[' + index + '].direction'], direction);
     setVec3Uniform(gl, uniforms['directionalLights[' + index + '].color'], color);
