@@ -41,6 +41,7 @@ import { scale } from './boxTransform';
 import { worm_create } from './worm';
 import { controls_create } from './controls';
 import { pointerLock_create } from './pointerLock';
+import { tween_create, tween_update } from './tween';
 import { compose } from './utils';
 import playAudio from './audio';
 
@@ -88,6 +89,11 @@ var cylinder = cylinderGeom_create(1, 1, 4, 8, 1);
 defaultColors([0, 0, 0])(cylinder);
 cylinderGeom_colorTop(cylinder, [1, 1, 1]);
 var mesh4 = mesh_create(cylinder, boxMaterial);
+
+tween_create(mesh4.position, {
+  to: { x: 1 },
+  duration: 500,
+});
 
 var worm = worm_create(8, 0.5, 0.5, 1, 0.2);
 
@@ -145,6 +151,8 @@ function update(t) {
 
   var dt = t - pt;
   pt = t;
+
+  tween_update();
 
   vec3_applyQuaternion(vec3_set(cameraDirection, 0, 0, -dt * cameraSpeed), camera.quaternion);
   vec3_add(camera.position, cameraDirection);
