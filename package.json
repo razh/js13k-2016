@@ -5,6 +5,9 @@
   "main": "index.js",
   "scripts": {
     "gulp": "gulp",
+    "advzip": "advzip build/build.zip -4 -i 200 -a dist",
+    "size": "gzip-size build/build.zip && gzip-size build/build.zip | pretty-bytes",
+    "compress": "gulp build && npm run advzip && npm run size",
     "lint": "eslint src",
     "test": "test"
   },
@@ -30,6 +33,8 @@
     "gulp-size": "2.1.0",
     "gulp-uglify": "2.0.0",
     "gulp-zip": "3.2.0",
+    "gzip-size-cli": "1.0.0",
+    "pretty-bytes-cli": "2.0.0",
     "rollup": "0.34.13",
     "rollup-plugin-string": "2.0.2",
     "run-sequence": "1.2.2"
