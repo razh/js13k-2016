@@ -5,6 +5,7 @@ import { mesh_create } from './mesh';
 import { object3d_create, object3d_add } from './object3d';
 import { quat_setFromEuler } from './quat';
 import { vec3_create, vec3_set } from './vec3';
+import { colors, defaultColors } from './boxColors';
 import { translateVertices, scaleVertices } from './boxTransform';
 import { compose } from './utils';
 
@@ -13,9 +14,10 @@ function createLegGeometry() {
     // Thigh geometry.
     compose(
       translateVertices({
-        px_ny: { x: -0.04 },
         // Align with foot.
-        nx_ny: { x: 0.03 },
+        px_ny: { x: -0.04 },
+        // Taller at base.
+        nx_py: { y: 0.03 },
       }),
       // Wider at base.
       scaleVertices({ nx: [1, 1, 1.5] })
@@ -23,6 +25,8 @@ function createLegGeometry() {
 
     // Foot geometry.
     compose(
+      defaultColors([1, 1, 1]),
+      colors({ px_ny: [0.3, 0.3, 0.3] }),
       // Move to end of leg.
       translate(0.08, 0, 0),
       // Create a sharp point.
@@ -41,7 +45,10 @@ export function bug_create() {
   var bug = object3d_create();
   var material = material_create();
 
-  var bodyGeometry = boxGeom_create(0.3, 0.15, 0.8);
+  var bodyGeometry = compose(
+    defaultColors([1, 1, 1]),
+    colors({ ny: [0.3, 0.3, 0.3] })
+  )(boxGeom_create(0.3, 0.15, 0.8));
 
   var rightLegTranslate = translate(0.15, 0, 0);
   var leftLegTranslate = translate(-0.15, 0, 0);
