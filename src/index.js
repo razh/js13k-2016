@@ -44,6 +44,7 @@ import { keys_create } from './keys';
 import { controls_create } from './controls';
 import { pointerLock_create } from './pointerLock';
 import { tween_create, tween_update } from './tween';
+import { bug_create } from './bug';
 import { compose } from './utils';
 import playAudio from './audio';
 
@@ -130,6 +131,7 @@ object3d_add(scene, worm);
 object3d_add(scene, camera);
 object3d_add(scene, light);
 object3d_add(scene, light2);
+object3d_add(scene, bug);
 
 c.width = window.innerWidth;
 c.height = window.innerHeight;

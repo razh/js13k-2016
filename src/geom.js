@@ -91,4 +91,6 @@ export function geom_merge(a, b) {
 
     a.faces.push(faceCopy);
   }
+
+  return a;
 }

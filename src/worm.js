@@ -16,24 +16,24 @@ export function worm_create(count, width, height, depth, separation) {
 
   var halfDepth = depth / 2;
 
-  var frontGeometry = boxGeom_create(width, height, halfDepth);
-  compose(
-    align('nz'),
-    scaleVertices({ nz: 0.5 }),
-    align('pz')
-  )(frontGeometry);
+  var geometry = geom_merge(
+    // Front.
+    compose(
+      align('nz'),
+      scaleVertices({ nz: 0.5 }),
+      align('pz')
+    )(boxGeom_create(width, height, halfDepth)),
 
-  var backGeometry = boxGeom_create(width, height, halfDepth);
-  compose(
-    align('pz'),
-    scaleVertices({ pz: 0.5 }),
-    align('nz')
-  )(backGeometry);
-
-  geom_merge(frontGeometry, backGeometry);
+    // Back.
+    compose(
+      align('pz'),
+      scaleVertices({ pz: 0.5 }),
+      align('nz')
+    )(boxGeom_create(width, height, halfDepth))
+  );
 
   for (var i = 0; i < count; i++) {
-    var mesh = mesh_create(frontGeometry, material);
+    var mesh = mesh_create(geometry, material);
     mesh.position.z = (depth / 2) + (depth + separation) * i;
     quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, Math.PI / 4));
     object3d_add(worm, mesh);
