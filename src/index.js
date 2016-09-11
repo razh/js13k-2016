@@ -38,7 +38,7 @@ import {
 } from './vec3';
 import { align } from './boxAlign';
 import { colors, defaultColors } from './boxColors';
-import { scale } from './boxTransform';
+import { scaleVertices } from './boxTransform';
 import { worm_create } from './worm';
 import { keys_create } from './keys';
 import { controls_create } from './controls';
@@ -65,7 +65,7 @@ quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, -Math.PI / 6));
 var box2 = boxGeom_create(1, 4, 1);
 compose(
   align('py'),
-  scale({ py: 0 }),
+  scaleVertices({ py: 0 }),
   align('px'),
   defaultColors([1, 1, 1]),
   colors({ py: [0.5, 0, 1] })

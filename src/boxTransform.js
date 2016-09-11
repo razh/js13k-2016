@@ -40,8 +40,5 @@ function transformBoxVertices(method) {
   };
 }
 
-export var translateBoxVertices = transformBoxVertices(vec3_add);
-export var scaleBoxVertices = transformBoxVertices(vec3_multiply);
-
-export var translate = rearg(translateBoxVertices);
-export var scale = rearg(scaleBoxVertices);
+export var translateVertices = rearg(transformBoxVertices(vec3_add));
+export var scaleVertices = rearg(transformBoxVertices(vec3_multiply));

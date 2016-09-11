@@ -16,6 +16,14 @@ export function rearg(fn) {
   };
 }
 
+export function rearg3f(fn) {
+  return function(x, y, z) {
+    return function(arg) {
+      return fn(arg, x, y, z);
+    };
+  };
+}
+
 function numericSort(a, b) {
   return a - b;
 }

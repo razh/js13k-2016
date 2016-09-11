@@ -6,7 +6,7 @@ import { object3d_create, object3d_add } from './object3d';
 import { quat_setFromEuler } from './quat';
 import { vec3_create, vec3_set } from './vec3';
 import { align } from './boxAlign';
-import { scale } from './boxTransform';
+import { scaleVertices } from './boxTransform';
 import { compose } from './utils';
 
 export function worm_create(count, width, height, depth, separation) {
@@ -19,14 +19,14 @@ export function worm_create(count, width, height, depth, separation) {
   var frontGeometry = boxGeom_create(width, height, halfDepth);
   compose(
     align('nz'),
-    scale({ nz: 0.5 }),
+    scaleVertices({ nz: 0.5 }),
     align('pz')
   )(frontGeometry);
 
   var backGeometry = boxGeom_create(width, height, halfDepth);
   compose(
     align('pz'),
-    scale({ pz: 0.5 }),
+    scaleVertices({ pz: 0.5 }),
     align('nz')
   )(backGeometry);
 
