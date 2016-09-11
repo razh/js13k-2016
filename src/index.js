@@ -40,6 +40,7 @@ import { align } from './boxAlign';
 import { colors, defaultColors } from './boxColors';
 import { scaleVertices } from './boxTransform';
 import { worm_create } from './worm';
+import { laser_create } from './laser';
 import { keys_create } from './keys';
 import { controls_create } from './controls';
 import { pointerLock_create } from './pointerLock';
@@ -104,6 +105,9 @@ var worm = worm_create(8, 0.5, 0.5, 1, 0.2);
 var bug = bug_create();
 vec3_set(bug.position, 3, 1, 5);
 
+var laser = laser_create(vec3_create(1, 0, 0));
+vec3_set(laser.position, 4, 1, 5);
+
 var camera = camera_create(60, window.innerWidth / window.innerHeight);
 vec3_set(camera.position, 4, 2, 8);
 camera_lookAt(camera, vec3_create());
@@ -132,6 +136,7 @@ object3d_add(scene, camera);
 object3d_add(scene, light);
 object3d_add(scene, light2);
 object3d_add(scene, bug);
+object3d_add(scene, laser);
 
 c.width = window.innerWidth;
 c.height = window.innerHeight;
