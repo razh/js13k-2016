@@ -31,6 +31,13 @@ export function vec3_add(a, b) {
   return a;
 }
 
+export function vec3_addVectors(v, a, b) {
+  v.x = a.x + b.x;
+  v.y = a.y + b.y;
+  v.z = a.z + b.z;
+  return v;
+}
+
 export function vec3_sub(a, b) {
   a.x -= b.x;
   a.y -= b.y;

@@ -1,11 +1,38 @@
-import { object3d_traverse, object3d_updateMatrixWorld } from ',/object3d';
-import { vec3_create, vec3_min, vec3_max, vec3_applyMatrix4 } from './vec3';
+import { object3d_traverse, object3d_updateMatrixWorld } from './object3d';
+import {
+  vec3_create,
+  vec3_add,
+  vec3_addVectors,
+  vec3_min,
+  vec3_max,
+  vec3_multiplyScalar,
+  vec3_applyMatrix4,
+} from './vec3';
 
 export function box3_create(min, max) {
   return {
     min: min || vec3_create(Infinity, Infinity, Infinity),
     max: max || vec3_create(-Infinity, -Infinity, -Infinity),
   };
+}
+
+export function box3_copy(a, b) {
+  Object.assign(a.min, b.min);
+  Object.assign(a.max, b.max);
+  return a;
+}
+
+export function box3_makeEmpty(box) {
+  box.min.x = box.min.y = box.min.z = Infinity;
+  box.max.x = box.max.y = box.max.z -= Infinity;
+  return box;
+}
+
+export function box3_center(box, center) {
+  return vec3_multiplyScalar(
+    vec3_addVectors(center, box.min, box.max),
+    0.5
+  );
 }
 
 export function box3_expandByPoint(box, point) {
@@ -37,8 +64,16 @@ export var box3_setFromObject = (function() {
   };
 }());
 
-export function box3_makeEmpty(box) {
-  box.min.x = box.min.y = box.min.z = Infinity;
-  box.max.x = box.max.y = box.max.z -= Infinity;
+export function box3_intersectsBox(a, b) {
+  return !(
+    a.max.x < b.min.x || a.min.x > b.max.x ||
+    a.max.y < b.min.y || a.min.y > b.max.y ||
+    a.max.z < b.min.z || a.min.z > b.max.z
+  );
+}
+
+export function box3_translate(box, offset) {
+  vec3_add(box.min, offset);
+  vec3_add(box.max, offset);
   return box;
 }
