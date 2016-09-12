@@ -55,6 +55,9 @@ var legsGeometry = geom_merge(
   leftLegTranslate(geom_flipFaces(scale(-1, 1, 1)(createLegGeometry())))
 );
 
+var outerLegsRotation = vec3_create();
+var middleLegsRotation = vec3_create();
+
 export function bug_create() {
   var bug = object3d_create();
   var material = material_create();
@@ -74,9 +77,6 @@ export function bug_create() {
   object3d_add(bug, hindLegs);
 
   physics_create(bug, BODY_DYNAMIC);
-
-  var outerLegsRotation = vec3_create();
-  var middleLegsRotation = vec3_create();
 
   var t = 0;
 
