@@ -7,6 +7,7 @@ module.exports = {
     sourceType: 'module',
   },
   globals: {
+    Set: false,
     ArrayBuffer: false,
     DataView: false,
     Float32Array: false,

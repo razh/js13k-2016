@@ -42,3 +42,7 @@ export function remove(array, element) {
     array.splice(index, 1);
   }
 }
+
+export function uniq(array) {
+  return Array.from(new Set(array));
+}
