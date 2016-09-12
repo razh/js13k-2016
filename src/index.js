@@ -63,7 +63,7 @@ import {
   physics_update,
 } from './physics';
 import { compose } from './utils';
-import playAudio from './audio';
+import playAudio, { playLaser, playExplosion } from './audio';
 
 // import vs from './shaders/phong_vert.glsl';
 // import fs from './shaders/phong_frag.glsl';
@@ -251,6 +251,7 @@ function update(t) {
         Object.assign(explosion.position, body.position);
         object3d_add(scene, explosion);
         object3d_remove(scene, body);
+        playExplosion();
       }
     });
 
@@ -352,7 +353,8 @@ document.addEventListener('keydown', function(event) {
   };
 
   object3d_add(scene, laser);
-  laserCount++;
+  laserCount = (laserCount + 1) % 2;
+  playLaser();
 });
 
 function setSize(width, height) {

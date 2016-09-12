@@ -1,3 +1,5 @@
+import { randFloatSpread, sample } from './math';
+
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var OfflineAudioContext = window.OfflineAudioContext || window.webkitOfflineAudioContext;
 var audioContext = new AudioContext();
@@ -169,6 +171,38 @@ function decay(d) {
   };
 }
 
+// Brown noise.
+// https://github.com/Tonejs/Tone.js/blob/master/Tone/source/Noise.js
+function noise(magnitude) {
+  magnitude = magnitude || 1;
+
+  return function() {
+    var value = 0;
+
+    return function() {
+      var step = (value + (0.02 * randFloatSpread(1))) / 1.02;
+      value += step;
+
+      if (-1 > value || value > 1) {
+        value -= step;
+      }
+
+      return value * 3.5 * magnitude;
+    };
+  };
+}
+
+function add(a, b) {
+  return function(f) {
+    var af = a(f);
+    var bf = b(f);
+
+    return function(t) {
+      return af(t) + bf(t);
+    };
+  };
+}
+
 function mul(a, b) {
   return function(f) {
     var af = a(f);
@@ -186,6 +220,30 @@ var Q = H / 2;
 var E = Q / 2;
 var S = E / 2;
 var T = S / 2;
+
+var laser = generateNotes(
+  mul(add(sin, noise()), decay(32)),
+  0.25,
+  0.5
+);
+
+export function playLaser() {
+  playSound(laser.a4, 0, master);
+}
+
+var explosion = generateNotes(
+  mul(noise(2), decay(64)),
+  0.25,
+  0.25
+);
+
+var explosionNotes = ['c3', 'd3', 'e3', 'f3'];
+
+export function playExplosion() {
+  playSound(explosion[sample(explosionNotes)], 0, master);
+  playSound(explosion[sample(explosionNotes)], Math.random() * T, master);
+  playSound(explosion[sample(explosionNotes)], 2 * Math.random() * T, master);
+}
 
 export default function() {
   var syn = generateNotes(mul(sin, decay(32)), 1, 1);
