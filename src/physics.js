@@ -48,7 +48,10 @@ var centerA = box3_create();
 var centerB = box3_create();
 
 export function physics_update(bodies) {
-  var removed = [];
+  var collisions = {
+    hit: [],
+    removed: [],
+  };
 
   for (var i = 0; i < bodies.length; i++) {
     var bodyA = bodies[i];
@@ -88,7 +91,8 @@ export function physics_update(bodies) {
 
         box3_translate(box3_copy(box, body.boundingBox), body.position);
         if (box3_containsPoint(box, bullet.position)) {
-          removed.push(bullet);
+          collisions.hit.push(body);
+          collisions.removed.push(bullet);
         }
 
         continue;
@@ -156,5 +160,5 @@ export function physics_update(bodies) {
     }
   }
 
-  return removed;
+  return collisions;
 }

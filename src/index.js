@@ -240,8 +240,8 @@ function update(t) {
     }
   });
 
-  var removed = physics_update(physics_bodies(scene));
-  removed.map(function(body) {
+  var collisions = physics_update(physics_bodies(scene));
+  collisions.removed.map(function(body) {
     if (body.physics === BODY_BULLET) {
       var explosion = explosion_create(15);
       Object.assign(explosion.position, body.position);
