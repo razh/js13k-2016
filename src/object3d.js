@@ -84,9 +84,11 @@ export function object3d_translateZ(obj, distance) {
 export function object3d_traverse(obj, callback) {
   callback(obj);
 
-  obj.children.map(function(child) {
+  var children = obj.children;
+  for (var i = 0; i < children.length; i++) {
+    var child = children[i];
     object3d_traverse(child, callback);
-  });
+  }
 }
 
 export function object3d_updateMatrix(obj) {
