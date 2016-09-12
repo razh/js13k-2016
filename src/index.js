@@ -47,6 +47,7 @@ import { laser_create } from './laser';
 import { keys_create } from './keys';
 import { controls_create } from './controls';
 import { pointerLock_create } from './pointerLock';
+import { easing_cubic_inout } from './easings';
 import { tween_create, tween_update } from './tween';
 import { bug_create } from './bug';
 import { compose } from './utils';
@@ -99,10 +100,13 @@ defaultColors([0, 0, 0])(cylinder);
 cylinderGeom_colorTop(cylinder, [1, 1, 1]);
 var mesh4 = mesh_create(cylinder, boxMaterial);
 
-tween_create(mesh4.position, {
-  to: { x: 1 },
-  duration: 500,
-});
+setTimeout(function() {
+  tween_create(mesh4.position, {
+    to: { x: 2, y: 2, z: -1 },
+    duration: 1000,
+    easing: easing_cubic_inout,
+  });
+}, 1000);
 
 var worm = worm_create(8, 0.5, 0.5, 1, 0.2);
 var bug = bug_create();
