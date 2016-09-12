@@ -35,7 +35,7 @@
     "gulp-zip": "3.2.0",
     "gzip-size-cli": "1.0.0",
     "pretty-bytes-cli": "2.0.0",
-    "rollup": "0.34.13",
+    "rollup": "0.35.9",
     "rollup-plugin-string": "2.0.2",
     "run-sequence": "1.2.2"
   }
