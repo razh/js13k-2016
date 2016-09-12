@@ -5,6 +5,7 @@ import { mesh_create } from './mesh';
 import { object3d_create, object3d_add } from './object3d';
 import { quat_setFromEuler } from './quat';
 import { vec3_create, vec3_set } from './vec3';
+import { BODY_DYNAMIC, physics_create } from './physics';
 import { colors, defaultColors } from './boxColors';
 import { translateVertices, scaleVertices } from './boxTransform';
 import { compose } from './utils';
@@ -41,22 +42,22 @@ function createLegGeometry() {
   );
 }
 
+var bodyGeometry = compose(
+  defaultColors([1, 1, 1]),
+  colors({ ny: [0.3, 0.3, 0.3] })
+)(boxGeom_create(0.3, 0.15, 0.8));
+
+var rightLegTranslate = translate(0.15, 0, 0);
+var leftLegTranslate = translate(-0.15, 0, 0);
+
+var legsGeometry = geom_merge(
+  rightLegTranslate(createLegGeometry()),
+  leftLegTranslate(scale(-1, 1, -1)(createLegGeometry()))
+);
+
 export function bug_create() {
   var bug = object3d_create();
   var material = material_create();
-
-  var bodyGeometry = compose(
-    defaultColors([1, 1, 1]),
-    colors({ ny: [0.3, 0.3, 0.3] })
-  )(boxGeom_create(0.3, 0.15, 0.8));
-
-  var rightLegTranslate = translate(0.15, 0, 0);
-  var leftLegTranslate = translate(-0.15, 0, 0);
-
-  var legsGeometry = geom_merge(
-    rightLegTranslate(createLegGeometry()),
-    leftLegTranslate(scale(-1, 1, -1)(createLegGeometry()))
-  );
 
   var body = mesh_create(bodyGeometry, material);
   var foreLegs = mesh_create(legsGeometry, material);
@@ -71,6 +72,8 @@ export function bug_create() {
   object3d_add(bug, foreLegs);
   object3d_add(bug, middleLegs);
   object3d_add(bug, hindLegs);
+
+  physics_create(bug, BODY_DYNAMIC);
 
   var outerLegsRotation = vec3_create();
   var middleLegsRotation = vec3_create();
