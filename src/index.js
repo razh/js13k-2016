@@ -52,6 +52,7 @@ import { pointerLock_create } from './pointerLock';
 import { easing_cubic_inout } from './easings';
 import { tween_create, tween_update } from './tween';
 import { bug_create } from './bug';
+import { scanner_create } from './scanner';
 import { dust_create } from './dust';
 import { explosion_create } from './explosion';
 import {
@@ -126,6 +127,8 @@ setTimeout(function() {
 var worm = worm_create(8, 0.5, 0.5, 1, 0.2);
 var bug = bug_create();
 vec3_set(bug.position, 3, 1, 5);
+var scanner = scanner_create();
+vec3_set(scanner.position, -1, 1, 5);
 
 var laser = laser_create(vec3_create(1, 0, 0));
 vec3_set(laser.position, 4, 1, 5);
@@ -175,6 +178,7 @@ object3d_add(scene, camera);
 object3d_add(scene, light);
 object3d_add(scene, light2);
 object3d_add(scene, bug);
+object3d_add(scene, scanner);
 object3d_add(scene, dust);
 object3d_add(scene, laser);
 object3d_add(scene, explosion);
