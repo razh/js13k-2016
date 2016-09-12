@@ -2,6 +2,7 @@
 
 import { boxGeom_create } from './boxGeom';
 import { bufferGeom_create, bufferGeom_fromGeom } from './bufferGeom';
+import { box3_create } from './box3';
 import { camera_create, camera_lookAt, camera_updateProjectionMatrix } from './camera';
 import { cylinderGeom_create, cylinderGeom_colorTop } from './cylinderGeom';
 import { directionalLight_create } from './directionalLight';
@@ -50,6 +51,7 @@ import { pointerLock_create } from './pointerLock';
 import { easing_cubic_inout } from './easings';
 import { tween_create, tween_update } from './tween';
 import { bug_create } from './bug';
+import { BODY_STATIC, BODY_DYNAMIC, physics_create, physics_bodies, physics_update } from './physics';
 import { compose } from './utils';
 import playAudio from './audio';
 
@@ -81,8 +83,6 @@ mesh2.position.x = 2;
 
 var group = object3d_create();
 var boxCount = 144;
-group.position.x = -Math.sqrt(boxCount) / 2;
-group.position.z = -Math.sqrt(boxCount) / 2;
 for (var i = 0; i < boxCount; i++) {
   var box3 = boxGeom_create(0.75, 0.2, 0.75);
   compose(
@@ -95,10 +95,15 @@ for (var i = 0; i < boxCount; i++) {
   object3d_add(group, mesh3);
 }
 
+physics_create(group, BODY_STATIC);
+group.position.x = -Math.sqrt(boxCount) / 2;
+group.position.z = -Math.sqrt(boxCount) / 2;
+
 var cylinder = cylinderGeom_create(1, 1, 4, 8, 1);
 defaultColors([0, 0, 0])(cylinder);
 cylinderGeom_colorTop(cylinder, [1, 1, 1]);
 var mesh4 = mesh_create(cylinder, boxMaterial);
+physics_create(mesh4, BODY_STATIC);
 
 setTimeout(function() {
   tween_create(mesh4.position, {
@@ -116,6 +121,12 @@ var laser = laser_create(vec3_create(1, 0, 0));
 vec3_set(laser.position, 4, 1, 5);
 
 var camera = camera_create(60, window.innerWidth / window.innerHeight);
+var cameraSize = 0.2;
+physics_create(camera, BODY_DYNAMIC);
+camera.boundingBox = box3_create(
+  vec3_create(-cameraSize, -cameraSize, -cameraSize),
+  vec3_create(cameraSize, cameraSize, cameraSize)
+);
 vec3_set(camera.position, 4, 2, 8);
 camera_lookAt(camera, vec3_create());
 pointerLock_create(controls_create(camera), c);
@@ -205,6 +216,8 @@ function update(t) {
       object.update(dt);
     }
   });
+
+  physics_update(physics_bodies(scene));
 }
 
 function setFloat32AttributeBuffer(name, location, bufferGeom, size) {
