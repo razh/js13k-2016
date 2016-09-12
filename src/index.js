@@ -12,6 +12,7 @@ import { mesh_create } from './mesh';
 import {
   object3d_create,
   object3d_add,
+  object3d_remove,
   object3d_translateOnAxis,
   object3d_translateX,
   object3d_translateZ,
@@ -52,7 +53,14 @@ import { easing_cubic_inout } from './easings';
 import { tween_create, tween_update } from './tween';
 import { bug_create } from './bug';
 import { explosion_create } from './explosion';
-import { BODY_STATIC, BODY_DYNAMIC, physics_create, physics_bodies, physics_update } from './physics';
+import {
+  BODY_STATIC,
+  BODY_DYNAMIC,
+  BODY_BULLET,
+  physics_create,
+  physics_bodies,
+  physics_update,
+} from './physics';
 import { compose } from './utils';
 import playAudio from './audio';
 
@@ -218,11 +226,19 @@ function update(t) {
 
   object3d_traverse(scene, function(object) {
     if (object.update) {
-      object.update(dt);
+      object.update(dt, scene);
     }
   });
 
-  physics_update(physics_bodies(scene));
+  var removed = physics_update(physics_bodies(scene));
+  removed.map(function(body) {
+    if (body.physics === BODY_BULLET) {
+      var explosion = explosion_create(15);
+      Object.assign(explosion.position, body.position);
+      object3d_add(scene, explosion);
+      object3d_remove(scene, body);
+    }
+  });
 }
 
 function setFloat32AttributeBuffer(name, location, bufferGeom, size) {
@@ -306,10 +322,11 @@ document.addEventListener('keydown', function(event) {
   }
 
   var laser = laser_create(vec3_create(0.3, 0.3, 1));
+  laser.physics = BODY_BULLET;
   Object.assign(laser.position, camera.position);
   Object.assign(laser.quaternion, camera.quaternion);
   vec3_applyQuaternion(Object.assign(_vec3, vec3_X), laser.quaternion);
-  object3d_translateX(laser, laserCount % 2 ? -0.5 : 0.5);
+  object3d_translateX(laser, laserCount % 2 ? -0.3 : 0.3);
 
   laser.update = function(dt) {
     object3d_translateZ(laser, -16 * dt);

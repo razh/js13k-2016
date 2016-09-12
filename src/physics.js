@@ -2,6 +2,7 @@ import {
   box3_create,
   box3_copy,
   box3_center,
+  box3_containsPoint,
   box3_intersectsBox,
   box3_setFromObject,
   box3_translate,
@@ -17,6 +18,7 @@ import {
 
 export var BODY_STATIC = 1;
 export var BODY_DYNAMIC = 2;
+export var BODY_BULLET = 4;
 
 export function physics_create(obj, type) {
   obj.physics = type;
@@ -38,6 +40,7 @@ export function physics_bodies(obj) {
 
 var penetration = vec3_create();
 
+var box = box3_create();
 var boxA = box3_create();
 var boxB = box3_create();
 
@@ -45,6 +48,8 @@ var centerA = box3_create();
 var centerB = box3_create();
 
 export function physics_update(bodies) {
+  var removed = [];
+
   for (var i = 0; i < bodies.length; i++) {
     var bodyA = bodies[i];
 
@@ -61,6 +66,35 @@ export function physics_update(bodies) {
         continue;
       }
 
+      // Projectiles don't collide.
+      if (bodyA.physics === BODY_BULLET &&
+          bodyB.physics === BODY_BULLET) {
+        continue;
+      }
+
+      // One projectile.
+      if ((bodyA.physics === BODY_BULLET && bodyB.physics !== BODY_BULLET) ||
+          (bodyA.physics !== BODY_BULLET && bodyB.physics === BODY_BULLET)) {
+        var bullet;
+        var body;
+
+        if (bodyA.physics === BODY_BULLET) {
+          bullet = bodyA;
+          body = bodyB;
+        } else {
+          bullet = bodyB;
+          body = bodyA;
+        }
+
+        box3_translate(box3_copy(box, body.boundingBox), body.position);
+        if (box3_containsPoint(box, bullet.position)) {
+          removed.push(bullet);
+        }
+
+        continue;
+      }
+
+      // Two dynamic bodies, or one static and one dynamic body.
       box3_translate(box3_copy(boxA, bodyA.boundingBox), bodyA.position);
       box3_translate(box3_copy(boxB, bodyB.boundingBox), bodyB.position);
 
@@ -121,4 +155,6 @@ export function physics_update(bodies) {
       }
     }
   }
+
+  return removed;
 }
