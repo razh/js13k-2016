@@ -1,3 +1,7 @@
+export function lerp(a, b, t) {
+  return a + t * (b - a);
+}
+
 export function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
