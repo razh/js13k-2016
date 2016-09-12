@@ -52,6 +52,7 @@ import { pointerLock_create } from './pointerLock';
 import { easing_cubic_inout } from './easings';
 import { tween_create, tween_update } from './tween';
 import { bug_create } from './bug';
+import { dust_create } from './dust';
 import { explosion_create } from './explosion';
 import {
   BODY_STATIC,
@@ -132,6 +133,14 @@ vec3_set(laser.position, 4, 1, 5);
 var explosion = explosion_create(25);
 vec3_set(explosion.position, 2, 1, 5);
 
+var dust = dust_create(
+  box3_create(
+    vec3_create(-10, 0, -10),
+    vec3_create(10, 10, 10)
+  ),
+  30
+);
+
 var camera = camera_create(60, window.innerWidth / window.innerHeight);
 var cameraSize = 0.2;
 physics_create(camera, BODY_DYNAMIC);
@@ -166,6 +175,7 @@ object3d_add(scene, camera);
 object3d_add(scene, light);
 object3d_add(scene, light2);
 object3d_add(scene, bug);
+object3d_add(scene, dust);
 object3d_add(scene, laser);
 object3d_add(scene, explosion);
 

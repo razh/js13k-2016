@@ -18,7 +18,7 @@ var EPSILON = 1e-2;
 var gravity = vec3_create(0, -10, 0);
 var acceleration = vec3_create();
 var distance = vec3_create();
-var boxGeom = boxGeom_create(1, 1, 1);
+var geometry = boxGeom_create(1, 1, 1);
 
 var materials = [
   [1, 0.9, 0.2],
@@ -39,7 +39,7 @@ export function explosion_create(count) {
 
   var i = count;
   while (i--) {
-    var sprite = mesh_create(boxGeom, sample(materials));
+    var sprite = mesh_create(geometry, sample(materials));
     var size = randFloat(0.05, 0.3);
     vec3_set(sprite.scale, size, size, size);
 
