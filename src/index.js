@@ -195,7 +195,10 @@ var uniforms = getUniformLocations(gl, program);
 
 gl.useProgram(program);
 
-var pt;
+var dt = 1/ 60;
+var accumulatedTime = 0;
+var previousTime;
+
 var cameraDirection = vec3_create();
 
 function updateCamera(dt) {
@@ -219,36 +222,42 @@ function updateCamera(dt) {
 
 function update(t) {
   t = (t || 0) * 1e-3;
-  if (!pt) {
-    pt = t;
+  if (!previousTime) {
+    previousTime = t;
   }
 
-  var dt = t - pt;
-  pt = t;
+  var frameTime = Math.min(t - previousTime, 0.1);
+  accumulatedTime += frameTime;
+  previousTime = t;
 
   tween_update();
-  updateCamera(dt);
 
   mesh.position.x = Math.cos(t);
   quat_setFromEuler(mesh.quaternion, vec3_set(_vec3, 0, 0, t + 1));
   light.position.x = Math.cos(t) * 3;
   light.position.z = Math.sin(t) * 3;
 
-  object3d_traverse(scene, function(object) {
-    if (object.update) {
-      object.update(dt, scene);
-    }
-  });
+  while (accumulatedTime >= dt) {
+    object3d_traverse(scene, function(object) {
+      if (object.update) {
+        object.update(dt, scene);
+      }
+    });
 
-  var collisions = physics_update(physics_bodies(scene));
-  collisions.removed.map(function(body) {
-    if (body.physics === BODY_BULLET) {
-      var explosion = explosion_create(15);
-      Object.assign(explosion.position, body.position);
-      object3d_add(scene, explosion);
-      object3d_remove(scene, body);
-    }
-  });
+    var collisions = physics_update(physics_bodies(scene));
+    collisions.removed.map(function(body) {
+      if (body.physics === BODY_BULLET) {
+        var explosion = explosion_create(15);
+        Object.assign(explosion.position, body.position);
+        object3d_add(scene, explosion);
+        object3d_remove(scene, body);
+      }
+    });
+
+    updateCamera(dt);
+
+    accumulatedTime -= dt;
+  }
 }
 
 function setFloat32AttributeBuffer(name, location, bufferGeom, size) {
