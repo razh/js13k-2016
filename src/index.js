@@ -11,6 +11,9 @@ import { mesh_create } from './mesh';
 import {
   object3d_create,
   object3d_add,
+  object3d_translateOnAxis,
+  object3d_translateX,
+  object3d_translateZ,
   object3d_traverse,
   object3d_updateMatrixWorld,
 } from './object3d';
@@ -30,11 +33,11 @@ import {
   vec3_multiplyScalar,
   vec3_setFromMatrixPosition,
   vec3_set,
-  vec3_add,
   vec3_sub,
   vec3_normalize,
   vec3_transformDirection,
   vec3_applyQuaternion,
+  vec3_X,
 } from './vec3';
 import { align } from './boxAlign';
 import { colors, defaultColors } from './boxColors';
@@ -158,7 +161,7 @@ var pt;
 var cameraDirection = vec3_create();
 
 function updateCamera(dt) {
-  var speed = 2;
+  var speed = 4;
 
   var x = 0;
   var z = 0;
@@ -172,9 +175,8 @@ function updateCamera(dt) {
     return;
   }
 
-  vec3_multiplyScalar(vec3_normalize(vec3_set(cameraDirection, x, 0, z)), speed * dt);
-  vec3_applyQuaternion(cameraDirection, camera.quaternion);
-  vec3_add(camera.position, cameraDirection);
+  vec3_normalize(vec3_set(cameraDirection, x, 0, z));
+  object3d_translateOnAxis(camera, cameraDirection, speed * dt);
 }
 
 function update(t) {
@@ -274,6 +276,26 @@ function render(t) {
 
 render();
 playAudio();
+
+var laserCount = 0;
+document.addEventListener('keydown', function(event) {
+  if (event.code !== 'Space') {
+    return;
+  }
+
+  var laser = laser_create(vec3_create(0.3, 0.3, 1));
+  Object.assign(laser.position, camera.position);
+  Object.assign(laser.quaternion, camera.quaternion);
+  vec3_applyQuaternion(Object.assign(_vec3, vec3_X), laser.quaternion);
+  object3d_translateX(laser, laserCount % 2 ? -0.5 : 0.5);
+
+  laser.update = function(dt) {
+    object3d_translateZ(laser, -16 * dt);
+  };
+
+  object3d_add(scene, laser);
+  laserCount++;
+});
 
 function setSize(width, height) {
   c.width = width;
