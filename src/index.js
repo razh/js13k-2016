@@ -140,11 +140,20 @@ vec3_set(laser.position, 4, 1, 5);
 var explosion = explosion_create(25);
 vec3_set(explosion.position, 2, 1, 5);
 
-var cpu = cpu_create();
-vec3_set(cpu.position, 10, 0, 0);
+// Dual-core.
+var healthBarY = 5;
 
-var healthBar = healthBar_create(cpu);
-vec3_set(healthBar.position, 10, 5, 0);
+var cpu0 = cpu_create();
+vec3_set(cpu0.position, 10, 0, 0);
+
+var healthBar0 = healthBar_create(cpu0);
+vec3_set(healthBar0.position, 10, healthBarY, 0);
+
+var cpu1 = cpu_create();
+vec3_set(cpu1.position, 25, 0, 0);
+
+var healthBar1 = healthBar_create(cpu1);
+vec3_set(healthBar1.position, 25, healthBarY, 0);
 
 var dust = dust_create(
   box3_create(
@@ -195,8 +204,10 @@ object3d_add(scene, scanner);
 object3d_add(scene, dust);
 object3d_add(scene, laser);
 object3d_add(scene, explosion);
-object3d_add(scene, cpu);
-object3d_add(scene, healthBar);
+object3d_add(scene, cpu0);
+object3d_add(scene, healthBar0);
+object3d_add(scene, cpu1);
+object3d_add(scene, healthBar1);
 
 c.width = window.innerWidth;
 c.height = window.innerHeight;
@@ -301,7 +312,7 @@ function update(time) {
         shake_create(
           cameraObject,
           // Decent enougb approximation for camera shake.
-          1 / (4 * distanceToCamera)
+          1 / (2 * distanceToCamera)
         );
       }
     });
