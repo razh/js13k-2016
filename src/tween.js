@@ -1,5 +1,5 @@
 import { easing_linear } from './easings';
-import { removeIndices } from './utils';
+import { removeIndices, remove } from './utils';
 
 var tweens = [];
 
@@ -14,6 +14,7 @@ export function tween_create(object, options, callback) {
     to: options.to,
     duration: options.duration,
     easing: options.easing || easing_linear,
+    update: options.update,
     callback: callback,
   };
 
@@ -37,6 +38,10 @@ export function tween_update() {
       tween.object[key] = start + (end - start) * t;
     });
 
+    if (tween.update) {
+      tween.update(tween);
+    }
+
     if (elapsed > 1) {
       removedIndices.push(index);
 
@@ -47,4 +52,12 @@ export function tween_update() {
   });
 
   removeIndices(tweens, removedIndices);
+}
+
+export function tween_cancel(tween) {
+  remove(tweens, tween);
+}
+
+export function tween_clear() {
+  tweens = [];
 }

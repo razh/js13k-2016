@@ -57,6 +57,7 @@ import { scanner_create } from './scanner';
 import { dust_create } from './dust';
 import { cpu_create } from './cpu';
 import { explosion_create } from './explosion';
+import { shake_create } from './shake';
 import {
   BODY_STATIC,
   BODY_DYNAMIC,
@@ -160,6 +161,9 @@ vec3_set(camera.position, 4, 2, 8);
 camera_lookAt(camera, vec3_create());
 pointerLock_create(controls_create(camera), c);
 
+var cameraObject = object3d_create();
+object3d_add(cameraObject, camera);
+
 var keys = keys_create();
 
 var fogColor = vec3_create(0, 0, 0);
@@ -179,7 +183,7 @@ object3d_add(scene, mesh2);
 object3d_add(scene, group);
 object3d_add(scene, mesh4);
 object3d_add(scene, worm);
-object3d_add(scene, camera);
+object3d_add(scene, cameraObject);
 object3d_add(scene, light);
 object3d_add(scene, light2);
 object3d_add(scene, bug);
@@ -280,6 +284,13 @@ function update(time) {
         object3d_add(scene, explosion);
         object3d_remove(scene, body);
         playExplosion();
+
+        var distanceToCamera = vec3_distanceTo(camera.position, explosion.position);
+        shake_create(
+          cameraObject,
+          // Decent enougb approximation for camera shake.
+          1 / (4 * distanceToCamera)
+        );
       }
     });
 
