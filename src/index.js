@@ -55,7 +55,7 @@ import {
   physics_bodies,
   physics_update,
 } from './physics';
-import playAudio, { playLaser, playExplosion } from './audio';
+import { playMusic, playLaser, playExplosion } from './audio';
 import { create_test } from './maps';
 
 // import vs from './shaders/phong_vert.glsl';
@@ -63,6 +63,8 @@ import { create_test } from './maps';
 import { vert, frag } from './phong';
 
 var _vec3 = vec3_create();
+
+var scene = object3d_create();
 
 // Dual-core.
 var healthBarY = 5;
@@ -114,7 +116,6 @@ var light2 = directionalLight_create(vec3_create(0.2, 0.3, 0.5));
 vec3_set(light2.position, -2, 2, -2);
 var directionalLights = [light, light2];
 
-var scene = object3d_create();
 object3d_add(scene, cameraObject);
 object3d_add(scene, light);
 object3d_add(scene, light2);
@@ -310,7 +311,7 @@ function render(time) {
 }
 
 render();
-playAudio();
+playMusic();
 
 var laserCount = 0;
 var laserSpeed = 16;

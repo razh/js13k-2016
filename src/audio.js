@@ -245,7 +245,7 @@ export function playExplosion() {
   playSound(explosion[sample(explosionNotes)], 2 * Math.random() * T, master);
 }
 
-export default function() {
+export function playMusic() {
   var syn = generateNotes(mul(sin, decay(32)), 1, 1);
   var kick = generateNotes(mul(sin, decay(64)), 0.5, 1);
   var blip = generateNotes(mul(sin, decay(32)), 0.1, 0.5);
