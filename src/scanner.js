@@ -11,43 +11,41 @@ import { colors, defaultColors } from './boxColors';
 import { translateVertices } from './boxTransform';
 import { compose } from './utils';
 
-function createArmGeometry() {
-  return geom_merge(
-    compose(
-      align('pz'),
-      defaultColors([1, 1, 1]),
-      colors({ ny: [0.5, 0.5, 0.5] }),
-      translateVertices({
-        // Higher back.
-        nz: { y: 1 },
-        // Pointier back.
-        ny_nz: { y: 0.25, z: 0.25 },
-        // Shrink along x-axis.
-        nx_nz: { x: 0.25 },
-        px_nz: { x: -0.25 },
-      })
-    )(boxGeom_create(0.5, 0.5, 2)),
+var armGeometry = geom_merge(
+  compose(
+    align('pz'),
+    defaultColors([1, 1, 1]),
+    colors({ ny: [0.5, 0.5, 0.5] }),
+    translateVertices({
+      // Higher back.
+      nz: { y: 1 },
+      // Pointier back.
+      ny_nz: { y: 0.25, z: 0.25 },
+      // Shrink along x-axis.
+      nx_nz: { x: 0.25 },
+      px_nz: { x: -0.25 },
+    })
+  )(boxGeom_create(0.5, 0.5, 2)),
 
-    compose(
-      align('nz'),
-      defaultColors([1, 1, 1]),
-      colors({ ny: [0.5, 0.5, 0.5] }),
-      translateVertices({
-        // Smaller front.
-        // Shrink along x-axis.
-        nx_pz: { x: 0.15 },
-        px_pz: { x: -0.15 },
-        // Shrink along y-axis.
-        py_pz: { y: -0.3 },
-        ny_pz: { y: 0.05 },
-      })
-    )(boxGeom_create(0.5, 0.5, 0.375))
-  );
-}
+  compose(
+    align('nz'),
+    defaultColors([1, 1, 1]),
+    colors({ ny: [0.5, 0.5, 0.5] }),
+    translateVertices({
+      // Smaller front.
+      // Shrink along x-axis.
+      nx_pz: { x: 0.15 },
+      px_pz: { x: -0.15 },
+      // Shrink along y-axis.
+      py_pz: { y: -0.3 },
+      ny_pz: { y: 0.05 },
+    })
+  )(boxGeom_create(0.5, 0.5, 0.375))
+);
+
+armGeometry = translate(0, 0.5, 0)(armGeometry);
 
 var armRotation = vec3_create();
-
-var armGeometry = translate(0, 0.5, 0)(createArmGeometry());
 var material = material_create();
 
 export function scanner_create() {
@@ -66,12 +64,6 @@ export function scanner_create() {
   object3d_add(scanner, rightArm);
 
   physics_create(scanner, BODY_DYNAMIC);
-
-  var t = 0;
-
-  scanner.update = function(dt) {
-    t += dt;
-  };
 
   return scanner;
 }

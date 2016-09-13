@@ -1,4 +1,4 @@
-import { face3_create } from './face3';
+import { face3_create, face3_clone } from './face3';
 import { vec3_create, vec3_clone, vec3_add, vec3_multiply, vec3_set } from './vec3';
 import { rearg3f } from './utils';
 
@@ -93,4 +93,11 @@ export function geom_merge(a, b) {
   }
 
   return a;
+}
+
+export function geom_clone(geom) {
+  var geomCopy = geom_create();
+  geomCopy.vertices = geom.vertices.map(vec3_clone);
+  geomCopy.faces = geom.faces.map(face3_clone);
+  return geomCopy;
 }

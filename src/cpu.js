@@ -1,5 +1,5 @@
 import { boxGeom_create } from './boxGeom';
-import { geom_create, geom_merge, translate } from './geom';
+import { geom_create, geom_clone, geom_merge, translate } from './geom';
 import { mesh_create } from './mesh';
 import { material_create } from './material';
 import { object3d_create, object3d_add } from './object3d';
@@ -41,56 +41,38 @@ var chipGeometry = geom_merge(
   )(boxGeom_create(cpuSize, 0.1, cpuSize))
 );
 
-function createPinGeometry(transform) {
-  var pinWidth = 0.15;
-  var pinHeight = 0.4;
+var pinWidth = 0.15;
+var pinHeight = 0.4;
 
-  return transform(boxGeom_create(pinWidth, pinHeight, pinWidth));
-}
+var pinGeometry = boxGeom_create(pinWidth, pinHeight, pinWidth);
 
-function createFrontPin() {
-  return createPinGeometry(
-    compose(
-      align('ny_nz'),
-      translateVertices({
-        py_pz: { y: -0.2 },
-      })
-    )
-  );
-}
+var frontPinGeometry = compose(
+  align('ny_nz'),
+  translateVertices({
+    py_pz: { y: -0.2 },
+  })
+)(geom_clone(pinGeometry));
 
-function createBackPin() {
-  return createPinGeometry(
-    compose(
-      align('ny_pz'),
-      translateVertices({
-        py_nz: { y: -0.2 },
-      })
-    )
-  );
-}
+var backPinGeometry = compose(
+  align('ny_pz'),
+  translateVertices({
+    py_nz: { y: -0.2 },
+  })
+)(geom_clone(pinGeometry));
 
-function createLeftPin() {
-  return createPinGeometry(
-    compose(
-      align('px_ny'),
-      translateVertices({
-        nx_py: { y: -0.2 },
-      })
-    )
-  );
-}
+var leftPinGeometry = compose(
+  align('px_ny'),
+  translateVertices({
+    nx_py: { y: -0.2 },
+  })
+)(geom_clone(pinGeometry));
 
-function createRightPin() {
-  return createPinGeometry(
-    compose(
-      align('nx_ny'),
-      translateVertices({
-        px_py: { y: -0.2 },
-      })
-    )
-  );
-}
+var rightPinGeometry = compose(
+  align('nx_ny'),
+  translateVertices({
+    px_py: { y: -0.2 },
+  })
+)(geom_clone(pinGeometry));
 
 var frontRow = geom_create();
 var backRow = geom_create();
@@ -99,10 +81,10 @@ var rightRow = geom_create();
 
 for (var i = 0; i < 12; i++) {
   var distance = i * 0.5 - 2.75;
-  geom_merge(frontRow, translate(distance, 0, halfCpuSize)(createFrontPin()));
-  geom_merge(backRow, translate(distance, 0, -halfCpuSize)(createBackPin()));
-  geom_merge(leftRow, translate(-halfCpuSize, 0, distance)(createLeftPin()));
-  geom_merge(rightRow, translate(halfCpuSize, 0, distance)(createRightPin()));
+  geom_merge(frontRow, translate(distance, 0, halfCpuSize)(geom_clone(frontPinGeometry)));
+  geom_merge(backRow, translate(distance, 0, -halfCpuSize)(geom_clone(backPinGeometry)));
+  geom_merge(leftRow, translate(-halfCpuSize, 0, distance)(geom_clone(leftPinGeometry)));
+  geom_merge(rightRow, translate(halfCpuSize, 0, distance)(geom_clone(rightPinGeometry)));
 }
 
 var pinsGeometry = geom_merge(geom_merge(geom_merge(frontRow, backRow), leftRow), rightRow);

@@ -1,5 +1,5 @@
 import { boxGeom_create } from './boxGeom';
-import { geom_merge, translate, scale } from './geom';
+import { geom_clone, geom_merge, translate, scale } from './geom';
 import { material_create } from './material';
 import { mesh_create } from './mesh';
 import { object3d_create, object3d_add } from './object3d';
@@ -10,37 +10,35 @@ import { colors, defaultColors } from './boxColors';
 import { translateVertices, scaleVertices } from './boxTransform';
 import { compose } from './utils';
 
-function createLegGeometry() {
-  return geom_merge(
-    // Thigh geometry.
-    compose(
-      translateVertices({
-        // Align with foot.
-        px_ny: { x: -0.04 },
-        // Taller at base.
-        nx_py: { y: 0.03 },
-      }),
-      // Wider at base.
-      scaleVertices({ nx: [1, 1, 1.5] })
-    )(boxGeom_create(0.2, 0.06, 0.08)),
+var legGeometry = geom_merge(
+  // Thigh geometry.
+  compose(
+    translateVertices({
+      // Align with foot.
+      px_ny: { x: -0.04 },
+      // Taller at base.
+      nx_py: { y: 0.03 },
+    }),
+    // Wider at base.
+    scaleVertices({ nx: [1, 1, 1.5] })
+  )(boxGeom_create(0.2, 0.06, 0.08)),
 
-    // Foot geometry.
-    compose(
-      defaultColors([1, 1, 1]),
-      colors({ px_ny: [0.3, 0.3, 0.3] }),
-      // Move to end of leg.
-      translate(0.08, 0, 0),
-      // Create a sharp point.
-      scaleVertices({ px_ny: [1, 1, 0] }),
-      translateVertices({
-        // Move point out and down.
-        px_ny: { x: 0.06, y: -0.1 },
-        // Align with leg.
-        nx_py: { x: 0.04 },
-      })
-    )(boxGeom_create(0.04, 0.06, 0.08))
-  );
-}
+  // Foot geometry.
+  compose(
+    defaultColors([1, 1, 1]),
+    colors({ px_ny: [0.3, 0.3, 0.3] }),
+    // Move to end of leg.
+    translate(0.08, 0, 0),
+    // Create a sharp point.
+    scaleVertices({ px_ny: [1, 1, 0] }),
+    translateVertices({
+      // Move point out and down.
+      px_ny: { x: 0.06, y: -0.1 },
+      // Align with leg.
+      nx_py: { x: 0.04 },
+    })
+  )(boxGeom_create(0.04, 0.06, 0.08))
+);
 
 var bodyGeometry = compose(
   defaultColors([1, 1, 1]),
@@ -51,8 +49,8 @@ var rightLegTranslate = translate(0.15, 0, 0);
 var leftLegTranslate = translate(-0.15, 0, 0);
 
 var legsGeometry = geom_merge(
-  rightLegTranslate(createLegGeometry()),
-  leftLegTranslate(scale(-1, 1, -1)(createLegGeometry()))
+  rightLegTranslate(geom_clone(legGeometry)),
+  leftLegTranslate(scale(-1, 1, -1)(geom_clone(legGeometry)))
 );
 
 var outerLegsRotation = vec3_create();

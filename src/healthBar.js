@@ -1,5 +1,5 @@
 import { boxGeom_create } from './boxGeom';
-import { translate, scale } from './geom';
+import { geom_clone, translate, scale } from './geom';
 import { material_create } from './material';
 import { mesh_create } from './mesh';
 import { object3d_create, object3d_add } from './object3d';
@@ -7,12 +7,10 @@ import { vec3_set } from './vec3';
 
 var barWidth = 5;
 
-function createBarGeometry() {
-  return boxGeom_create(barWidth, 0.5, 0.5);
-}
+var barGeometry = boxGeom_create(barWidth, 0.5, 0.5);
 
-var innerBarGeometry = translate(-barWidth / 2, 0, 0)(createBarGeometry());
-var outerBarGeometry = scale(-1, 1, 1)(createBarGeometry());
+var innerBarGeometry = translate(-barWidth / 2, 0, 0)(geom_clone(barGeometry));
+var outerBarGeometry = scale(-1, 1, 1)(geom_clone(barGeometry));
 
 export function healthBar_create(object) {
   var maxHealth = object.health;
