@@ -208,6 +208,20 @@ var dt = 1/ 60;
 var accumulatedTime = 0;
 var previousTime;
 
+var canFire = (function() {
+  var period = 1 / 8;
+  var previousTime = 0;
+
+  return function(time) {
+    if ((time - previousTime) < period) {
+      return false;
+    }
+
+    previousTime = time;
+    return true;
+  };
+}());
+
 var cameraDirection = vec3_create();
 
 function updateCamera(dt) {
@@ -229,22 +243,26 @@ function updateCamera(dt) {
   object3d_translateOnAxis(camera, cameraDirection, speed * dt);
 }
 
-function update(t) {
-  t = (t || 0) * 1e-3;
+function update(time) {
+  time = (time || 0) * 1e-3;
   if (!previousTime) {
-    previousTime = t;
+    previousTime = time;
   }
 
-  var frameTime = Math.min(t - previousTime, 0.1);
+  var frameTime = Math.min(time - previousTime, 0.1);
   accumulatedTime += frameTime;
-  previousTime = t;
+  previousTime = time;
 
   tween_update();
 
-  mesh.position.x = Math.cos(t);
-  quat_setFromEuler(mesh.quaternion, vec3_set(_vec3, 0, 0, t + 1));
-  light.position.x = Math.cos(t) * 3;
-  light.position.z = Math.sin(t) * 3;
+  mesh.position.x = Math.cos(time);
+  quat_setFromEuler(mesh.quaternion, vec3_set(_vec3, 0, 0, time + 1));
+  light.position.x = Math.cos(time) * 3;
+  light.position.z = Math.sin(time) * 3;
+
+  if (canFire(time) && keys.Space) {
+    fireLaser();
+  }
 
   while (accumulatedTime >= dt) {
     object3d_traverse(scene, function(object) {
@@ -309,8 +327,8 @@ function renderMesh(mesh) {
 
 var lightDirection = vec3_create();
 
-function render(t) {
-  update(t);
+function render(time) {
+  update(time);
 
   object3d_updateMatrixWorld(scene);
   mat4_getInverse(camera.matrixWorldInverse, camera.matrixWorld);
@@ -345,11 +363,8 @@ render();
 playAudio();
 
 var laserCount = 0;
-document.addEventListener('keydown', function(event) {
-  if (event.code !== 'Space') {
-    return;
-  }
 
+function fireLaser() {
   var laser = laser_create(vec3_create(0.3, 0.3, 1));
   laser.physics = BODY_BULLET;
   Object.assign(laser.position, camera.position);
@@ -364,7 +379,7 @@ document.addEventListener('keydown', function(event) {
   object3d_add(scene, laser);
   laserCount = (laserCount + 1) % 2;
   playLaser();
-});
+}
 
 function setSize(width, height) {
   c.width = width;
