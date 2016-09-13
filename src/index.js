@@ -55,7 +55,7 @@ import { tween_create, tween_update } from './tween';
 import { bug_create } from './bug';
 import { scanner_create } from './scanner';
 import { dust_create } from './dust';
-import { cpu_create } from './machines';
+import { cpu_create } from './cpu';
 import { explosion_create } from './explosion';
 import {
   BODY_STATIC,
