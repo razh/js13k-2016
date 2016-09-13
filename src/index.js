@@ -260,11 +260,11 @@ function update(time) {
   light.position.x = Math.cos(time) * 3;
   light.position.z = Math.sin(time) * 3;
 
-  if (canFire(time) && keys.Space) {
-    fireLaser();
-  }
-
   while (accumulatedTime >= dt) {
+    if (keys.Space && canFire(time)) {
+      fireLaser();
+    }
+
     object3d_traverse(scene, function(object) {
       if (object.update) {
         object.update(dt, scene);
