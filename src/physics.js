@@ -156,6 +156,17 @@ export function physics_update(bodies) {
           vec3_add(bodyA.position, penetration);
           vec3_sub(bodyB.position, penetration);
         }
+
+        // HACK HACK HACK.
+        if (bodyA.enemy && !bodyB.enemy && bodyB.health) {
+          collisions.hit.push(bodyB);
+          collisions.removed.push(bodyA);
+          bodyA.physics = false;
+        } else if (!bodyA.enemy && bodyA.health && bodyB.enemy) {
+          collisions.hit.push(bodyA);
+          collisions.removed.push(bodyB);
+          bodyB.physics = false;
+        }
       }
     }
   }

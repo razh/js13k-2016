@@ -38,9 +38,7 @@ export function healthBar_create(object) {
     vec3_set(innerBarMaterial.emissive, 1 - t, t, 0);
     vec3_set(innerBar.scale, t, 1, 1);
 
-    if (!object.health) {
-      innerBar.visible = false;
-    }
+    innerBar.visible = !!object.health;
   };
 
   return healthBar;

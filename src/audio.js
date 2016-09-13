@@ -245,11 +245,9 @@ export function playExplosion() {
   playSound(explosion[sample(explosionNotes)], 2 * Math.random() * T, master);
 }
 
-export function playMusic() {
-  var syn = generateNotes(mul(sin, decay(32)), 1, 1);
-  var kick = generateNotes(mul(sin, decay(64)), 0.5, 1);
-  var blip = generateNotes(mul(sin, decay(32)), 0.1, 0.5);
+var kick = generateNotes(mul(sin, decay(64)), 0.5, 0.5);
 
+export function playDrums() {
   playSoundArray(master)([
     // Kick
     [kick.a2, H + Q],
@@ -264,26 +262,48 @@ export function playMusic() {
     [kick.a2, 3 * W + H + Q],
 
     [kick.a2, 4 * W + Q],
-
-    // Synth
-    [syn.a4, H],
-    [syn.d4, H + Q + E],
-
-    [syn.e4, W + E],
-    [syn.a4, W + H],
-    [syn.f4, W + H + E],
-
-    [syn.d4, 2 * W + H],
-    [syn.g3, 2 * W + H + Q + E],
-
-    [syn.a3, 3 * W + E],
-    [syn.d4, 3 * W + H],
-    [syn.as3, 3 * W + H + E],
-
-    [blip.a6, W + H],
-    [blip.a6, W + H + T],
-    [blip.a6, W + H + S],
-    [blip.c7, W + H + E],
-    [blip.a6, W + H + E + S],
   ]);
 }
+
+
+// export function playMusic() {
+//   var syn = generateNotes(mul(sin, decay(32)), 1, 1);
+//   var blip = generateNotes(mul(sin, decay(32)), 0.1, 0.5);
+
+//   playSoundArray(master)([
+//     // Kick
+//     [kick.a2, H + Q],
+
+//     [kick.a2, W + Q],
+//     [kick.a2, W + H + Q],
+
+//     [kick.a2, 2 * W + Q],
+//     [kick.a2, 2 * W + H + Q],
+
+//     [kick.a2, 3 * W + Q],
+//     [kick.a2, 3 * W + H + Q],
+
+//     [kick.a2, 4 * W + Q],
+
+//     // Synth
+//     [syn.a4, H],
+//     [syn.d4, H + Q + E],
+
+//     [syn.e4, W + E],
+//     [syn.a4, W + H],
+//     [syn.f4, W + H + E],
+
+//     [syn.d4, 2 * W + H],
+//     [syn.g3, 2 * W + H + Q + E],
+
+//     [syn.a3, 3 * W + E],
+//     [syn.d4, 3 * W + H],
+//     [syn.as3, 3 * W + H + E],
+
+//     [blip.a6, W + H],
+//     [blip.a6, W + H + T],
+//     [blip.a6, W + H + S],
+//     [blip.c7, W + H + E],
+//     [blip.a6, W + H + E + S],
+//   ]);
+// }

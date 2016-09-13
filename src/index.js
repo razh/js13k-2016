@@ -1,4 +1,4 @@
-/* global c */
+/* global _c, _r, _t */
 
 import { bufferGeom_create, bufferGeom_fromGeom } from './bufferGeom';
 import { box3_create } from './box3';
@@ -44,7 +44,7 @@ import { controls_create } from './controls';
 import { pointerLock_create } from './pointerLock';
 import { tween_update } from './tween';
 import { dust_create } from './dust';
-import { cpu_create } from './cpu';
+import { cpu_create, CPU_HEALTH } from './cpu';
 import { healthBar_create } from './healthBar';
 import { explosion_create } from './explosion';
 import { shake_create } from './shake';
@@ -55,8 +55,10 @@ import {
   physics_bodies,
   physics_update,
 } from './physics';
-import { playMusic, playLaser, playExplosion } from './audio';
-import { create_test } from './maps';
+import { playDrums, playLaser, playExplosion } from './audio';
+import { clamp } from './math';
+import { uniq } from './utils';
+import { create_test, create_map0 } from './maps';
 
 // import vs from './shaders/phong_vert.glsl';
 // import fs from './shaders/phong_frag.glsl';
@@ -64,7 +66,10 @@ import { vert, frag } from './phong';
 
 var _vec3 = vec3_create();
 
+var running = true;
 var scene = object3d_create();
+
+var cameraY = 6;
 
 // Dual-core.
 var healthBarY = 5;
@@ -96,9 +101,9 @@ camera.boundingBox = box3_create(
   vec3_create(-cameraSize, -cameraSize, -cameraSize),
   vec3_create(cameraSize, cameraSize, cameraSize)
 );
-vec3_set(camera.position, 4, 2, 8);
+vec3_set(camera.position, 6, cameraY, 8);
 camera_lookAt(camera, vec3_create());
-pointerLock_create(controls_create(camera), c);
+pointerLock_create(controls_create(camera), _c);
 
 var cameraObject = object3d_create();
 object3d_add(cameraObject, camera);
@@ -116,6 +121,7 @@ var light2 = directionalLight_create(vec3_create(0.2, 0.3, 0.5));
 vec3_set(light2.position, -2, 2, -2);
 var directionalLights = [light, light2];
 
+
 object3d_add(scene, cameraObject);
 object3d_add(scene, light);
 object3d_add(scene, light2);
@@ -124,13 +130,17 @@ object3d_add(scene, cpu0);
 object3d_add(scene, healthBar0);
 object3d_add(scene, cpu1);
 object3d_add(scene, healthBar1);
+scene.cpus = [cpu0, cpu1];
 
-create_test(scene);
+// create_test(scene);
+var map = object3d_create();
+object3d_add(scene, map);
+create_map0(map);
 
-c.width = window.innerWidth;
-c.height = window.innerHeight;
+_c.width = window.innerWidth;
+_c.height = window.innerHeight;
 
-var gl = c.getContext('webgl');
+var gl = _c.getContext('webgl');
 gl.clearColor(0, 0, 0, 0);
 gl.enable(gl.DEPTH_TEST);
 gl.enable(gl.CULL_FACE);
@@ -147,8 +157,8 @@ var dt = 1/ 60;
 var accumulatedTime = 0;
 var previousTime;
 
-var canFire = (function() {
-  var period = 1 / 8;
+function createCanFire(fireRate) {
+  var period = 1 / fireRate;
   var previousTime = 0;
 
   return function(time) {
@@ -159,12 +169,23 @@ var canFire = (function() {
     previousTime = time;
     return true;
   };
-}());
+}
+
+var canFire = createCanFire(8);
 
 var cameraDirection = vec3_create();
 
+function limitCamera(camera) {
+  vec3_set(
+    camera.position,
+    clamp(camera.position.x, -12, 12),
+    6,
+    clamp(camera.position.z, -8, 8)
+  );
+}
+
 function updateCamera(dt) {
-  var speed = 4;
+  var speed = 10;
 
   var x = 0;
   var z = 0;
@@ -182,8 +203,23 @@ function updateCamera(dt) {
   object3d_translateOnAxis(camera, cameraDirection, speed * dt);
 }
 
-function update(time) {
-  time = (time || 0) * 1e-3;
+function createExplosion(object) {
+  var explosion = explosion_create(15);
+  Object.assign(explosion.position, object.position);
+  object3d_add(scene, explosion);
+  object3d_remove(object.parent, object);
+  playExplosion();
+
+  var distanceToCamera = vec3_distanceTo(camera.position, explosion.position);
+  shake_create(
+    cameraObject,
+    // Decent enougb approximation for camera shake.
+    1 / (2 * distanceToCamera)
+  );
+}
+
+function update() {
+  var time = (performance.now() || 0) * 1e-3;
   if (!previousTime) {
     previousTime = time;
   }
@@ -210,32 +246,36 @@ function update(time) {
 
     var collisions = physics_update(physics_bodies(scene));
 
-    collisions.hit.map(function(hit) {
+    // Prevent multiple hits.
+    uniq(collisions.hit).map(function(hit) {
       if (hit.health > 0) {
         hit.health--;
       }
+
+      if (!hit.health && hit.physics === BODY_DYNAMIC) {
+        createExplosion(hit);
+      }
     });
 
-    collisions.removed.map(function(body) {
-      if (body.physics === BODY_BULLET) {
-        var explosion = explosion_create(15);
-        Object.assign(explosion.position, body.position);
-        object3d_add(scene, explosion);
-        object3d_remove(scene, body);
-        playExplosion();
-
-        var distanceToCamera = vec3_distanceTo(camera.position, explosion.position);
-        shake_create(
-          cameraObject,
-          // Decent enougb approximation for camera shake.
-          1 / (2 * distanceToCamera)
-        );
+    collisions.removed.map(function(removed) {
+      if (removed.physics === BODY_BULLET || removed.enemy) {
+        createExplosion(removed);
       }
     });
 
     updateCamera(dt);
+    limitCamera(camera);
 
     accumulatedTime -= dt;
+  }
+
+  var isGameOver = scene.cpus.every(function(cpu) { return cpu.health <= 0; });
+  if (isGameOver) {
+    setTimeout(function() {
+      running = false;
+      _r.hidden = false;
+      _r.disabled = false;
+    }, 1000);
   }
 }
 
@@ -278,8 +318,8 @@ function renderMesh(mesh) {
 
 var lightDirection = vec3_create();
 
-function render(time) {
-  update(time);
+function render() {
+  update();
 
   object3d_updateMatrixWorld(scene);
   mat4_getInverse(camera.matrixWorldInverse, camera.matrixWorld);
@@ -307,11 +347,42 @@ function render(time) {
     }
   });
 
-  requestAnimationFrame(render);
+  if (running) {
+    requestAnimationFrame(render);
+  }
 }
 
-render();
-playMusic();
+function resetGame() {
+  if (running) {
+    return;
+  }
+
+  _r.disabled = true;
+  _r.hidden = true;
+  cpu0.health = CPU_HEALTH;
+  cpu1.health = CPU_HEALTH;
+
+  object3d_remove(scene, map);
+  map = object3d_create();
+  object3d_add(scene, map);
+  create_map0(map);
+
+  previousTime = null;
+  running = true;
+  render();
+  playDrums();
+}
+
+_r.addEventListener('click', resetGame);
+
+function onDocumentClick() {
+  _t.hidden = true;
+  render();
+  playDrums();
+  document.removeEventListener('click', onDocumentClick);
+}
+
+document.addEventListener('click', onDocumentClick);
 
 var laserCount = 0;
 var laserSpeed = 16;
@@ -330,7 +401,7 @@ function fireLaser() {
   laser.update = function(dt) {
     object3d_translateZ(laser, -laserSpeed * dt);
     if (vec3_distanceTo(position, laser.position) > maxLaserDistance) {
-      object3d_remove(scene, laser);
+      object3d_remove(laser.parent, laser);
     }
   };
 
@@ -340,8 +411,8 @@ function fireLaser() {
 }
 
 function setSize(width, height) {
-  c.width = width;
-  c.height = height;
+  _c.width = width;
+  _c.height = height;
   gl.viewport(0, 0, width, height);
 }
 

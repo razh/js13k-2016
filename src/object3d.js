@@ -1,6 +1,16 @@
-import { mat4_create, mat4_compose, mat4_copy, mat4_multiplyMatrices } from './mat4';
-import { quat_create, quat_multiply, quat_setFromAxisAngle } from './quat';
-
+import {
+  mat4_create,
+  mat4_compose,
+  mat4_copy,
+  mat4_multiplyMatrices,
+  mat4_lookAt,
+} from './mat4';
+import {
+  quat_create,
+  quat_multiply,
+  quat_setFromAxisAngle,
+  quat_setFromRotationMatrix,
+} from './quat';
 import {
   vec3_create,
   vec3_add,
@@ -24,6 +34,15 @@ export function object3d_create() {
     visible: true,
   };
 }
+
+export var object3d_lookAt = (function() {
+  var m1 = mat4_create();
+
+  return function(object, vector) {
+    mat4_lookAt(m1, vector, object.position, vec3_Y);
+    quat_setFromRotationMatrix(object.quaternion, m1);
+  };
+}());
 
 export function object3d_add(parent, child) {
   child.parent = parent;

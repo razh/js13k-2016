@@ -15,38 +15,38 @@ var legGeometry = geom_merge(
   compose(
     translateVertices({
       // Align with foot.
-      px_ny: { x: -0.04 },
+      px_ny: { x: -0.08 },
       // Taller at base.
-      nx_py: { y: 0.03 },
+      nx_py: { y: 0.06 },
     }),
     // Wider at base.
     scaleVertices({ nx: [1, 1, 1.5] })
-  )(boxGeom_create(0.2, 0.06, 0.08)),
+  )(boxGeom_create(0.4, 0.12, 0.16)),
 
   // Foot geometry.
   compose(
     defaultColors([1, 1, 1]),
     colors({ px_ny: [0.3, 0.3, 0.3] }),
     // Move to end of leg.
-    translate(0.08, 0, 0),
+    translate(0.16, 0, 0),
     // Create a sharp point.
     scaleVertices({ px_ny: [1, 1, 0] }),
     translateVertices({
       // Move point out and down.
-      px_ny: { x: 0.06, y: -0.1 },
+      px_ny: { x: 0.12, y: -0.2 },
       // Align with leg.
-      nx_py: { x: 0.04 },
+      nx_py: { x: 0.08 },
     })
-  )(boxGeom_create(0.04, 0.06, 0.08))
+  )(boxGeom_create(0.08, 0.12, 0.16))
 );
 
 var bodyGeometry = compose(
   defaultColors([1, 1, 1]),
   colors({ ny: [0.3, 0.3, 0.3] })
-)(boxGeom_create(0.3, 0.15, 0.8));
+)(boxGeom_create(0.6, 0.3, 1.6));
 
-var rightLegTranslate = translate(0.15, 0, 0);
-var leftLegTranslate = translate(-0.15, 0, 0);
+var rightLegTranslate = translate(0.3, 0, 0);
+var leftLegTranslate = translate(-0.3, 0, 0);
 
 var legsGeometry = geom_merge(
   rightLegTranslate(geom_clone(legGeometry)),
@@ -59,13 +59,18 @@ var middleLegsRotation = vec3_create();
 export function bug_create() {
   var bug = object3d_create();
   var material = material_create();
+  vec3_set(material.emissive, 0.1, 0.1, 0.1);
+
+  bug.health = 2;
+  bug.speed = 1.5;
+  bug.enemy = true;
 
   var body = mesh_create(bodyGeometry, material);
   var foreLegs = mesh_create(legsGeometry, material);
   var middleLegs = mesh_create(legsGeometry, material);
   var hindLegs = mesh_create(legsGeometry, material);
 
-  var legDistance = 0.3;
+  var legDistance = 0.6;
   foreLegs.position.z = legDistance;
   hindLegs.position.z = -legDistance;
 

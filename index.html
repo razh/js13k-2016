@@ -12,20 +12,36 @@
       overflow: hidden;
     }
 
-    #t {
+    @keyframes t {
+      from {
+        opacity: 0;
+      }
+    }
+
+    #_t,
+    #_r {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font: 16vw Futura, sans-serif;
+      font: 12vw Futura, sans-serif;
       color: #fff;
       text-shadow: 0.1em 0.1em rgba(0, 0, 0, 0.5);
+      user-select: none;
+    }
+
+    #_r {
+      background: none;
+      box-shadow: none;
+      border: 0;
+      animation: t 0.3s;
     }
   </style>
 </head>
 <body>
-  <canvas id="c"></canvas>
-  <div id="t">GLITCH</div>
+  <canvas id="_c"></canvas>
+  <div id="_t">GL1TCH.EXE</div>
+  <button id="_r" hidden>Restart</button>
   <script src="./bundle.js"></script>
 </body>
 </html>

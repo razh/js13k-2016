@@ -51,6 +51,10 @@ var material = material_create();
 export function scanner_create() {
   var scanner = object3d_create();
 
+  scanner.health = 5;
+  scanner.speed = 5;
+  scanner.enemy = true;
+
   var topArm = mesh_create(armGeometry, material);
   var leftArm = mesh_create(armGeometry, material);
   var rightArm = mesh_create(armGeometry, material);
