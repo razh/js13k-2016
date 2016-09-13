@@ -54,6 +54,7 @@ import { tween_create, tween_update } from './tween';
 import { bug_create } from './bug';
 import { scanner_create } from './scanner';
 import { dust_create } from './dust';
+import { cpu_create } from './machines';
 import { explosion_create } from './explosion';
 import {
   BODY_STATIC,
@@ -136,6 +137,9 @@ vec3_set(laser.position, 4, 1, 5);
 var explosion = explosion_create(25);
 vec3_set(explosion.position, 2, 1, 5);
 
+var cpu = cpu_create();
+vec3_set(cpu.position, 10, 0, 0);
+
 var dust = dust_create(
   box3_create(
     vec3_create(-10, 0, -10),
@@ -159,7 +163,7 @@ var keys = keys_create();
 
 var fogColor = vec3_create(0, 0, 0);
 var fogNear = 0.1;
-var fogFar = 20;
+var fogFar = 40;
 
 var ambientLightColor = vec3_create(0.5, 0.5, 0.9);
 
@@ -182,6 +186,7 @@ object3d_add(scene, scanner);
 object3d_add(scene, dust);
 object3d_add(scene, laser);
 object3d_add(scene, explosion);
+object3d_add(scene, cpu);
 
 c.width = window.innerWidth;
 c.height = window.innerHeight;
