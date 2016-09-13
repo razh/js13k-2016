@@ -39,6 +39,7 @@ import {
   vec3_normalize,
   vec3_transformDirection,
   vec3_applyQuaternion,
+  vec3_distanceTo,
   vec3_X,
 } from './vec3';
 import { align } from './boxAlign';
@@ -363,17 +364,23 @@ render();
 playAudio();
 
 var laserCount = 0;
+var maxLaserDistance = 40;
 
 function fireLaser() {
   var laser = laser_create(vec3_create(0.3, 0.3, 1));
   laser.physics = BODY_BULLET;
   Object.assign(laser.position, camera.position);
   Object.assign(laser.quaternion, camera.quaternion);
+
+  var position = Object.assign(vec3_create(), laser.position);
   vec3_applyQuaternion(Object.assign(_vec3, vec3_X), laser.quaternion);
   object3d_translateX(laser, laserCount % 2 ? -0.3 : 0.3);
 
   laser.update = function(dt) {
     object3d_translateZ(laser, -16 * dt);
+    if (vec3_distanceTo(position, laser.position) > maxLaserDistance) {
+      object3d_remove(scene, laser);
+    }
   };
 
   object3d_add(scene, laser);

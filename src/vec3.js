@@ -163,6 +163,15 @@ export function vec3_applyQuaternion(v, q) {
   return v;
 }
 
+export function vec3_distanceTo(a, b) {
+  return Math.sqrt(vec3_distanceToSquared(a, b));
+}
+
+export function vec3_distanceToSquared(a, b) {
+  var dx = a.x - b.x, dy = a.y - b.y, dz = a.z - b.z;
+  return dx * dx + dy * dy + dz * dz;
+}
+
 export function vec3_setFromMatrixPosition(v, m) {
   v.x = m[12];
   v.y = m[13];
