@@ -364,6 +364,7 @@ render();
 playAudio();
 
 var laserCount = 0;
+var laserSpeed = 16;
 var maxLaserDistance = 40;
 
 function fireLaser() {
@@ -377,7 +378,7 @@ function fireLaser() {
   object3d_translateX(laser, laserCount % 2 ? -0.3 : 0.3);
 
   laser.update = function(dt) {
-    object3d_translateZ(laser, -16 * dt);
+    object3d_translateZ(laser, -laserSpeed * dt);
     if (vec3_distanceTo(position, laser.position) > maxLaserDistance) {
       object3d_remove(scene, laser);
     }
