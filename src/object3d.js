@@ -21,6 +21,7 @@ export function object3d_create() {
     matrix: mat4_create(),
     matrixWorld: mat4_create(),
     modelViewMatrix: mat4_create(),
+    visible: true,
   };
 }
 

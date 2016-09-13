@@ -10,6 +10,8 @@ import { translateVertices } from './boxTransform';
 import { BODY_STATIC, physics_create } from './physics';
 import { compose } from './utils';
 
+var cpuHealth = 100;
+
 var cpuSize = 6;
 var halfCpuSize = cpuSize / 2;
 var cpuBottomHeight = 0.5;
@@ -107,6 +109,7 @@ var pinsGeometry = geom_merge(geom_merge(geom_merge(frontRow, backRow), leftRow)
 
 export function cpu_create() {
   var cpu = object3d_create();
+  cpu.health = cpuHealth;
 
   var chipMaterial = material_create();
   vec3_set(chipMaterial.color, 0.5, 0.5, 0.5);

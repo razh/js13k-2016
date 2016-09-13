@@ -56,6 +56,7 @@ import { bug_create } from './bug';
 import { scanner_create } from './scanner';
 import { dust_create } from './dust';
 import { cpu_create } from './cpu';
+import { healthBar_create } from './healthBar';
 import { explosion_create } from './explosion';
 import { shake_create } from './shake';
 import {
@@ -142,6 +143,9 @@ vec3_set(explosion.position, 2, 1, 5);
 var cpu = cpu_create();
 vec3_set(cpu.position, 10, 0, 0);
 
+var healthBar = healthBar_create(cpu);
+vec3_set(healthBar.position, 10, 5, 0);
+
 var dust = dust_create(
   box3_create(
     vec3_create(-10, 0, -10),
@@ -192,6 +196,7 @@ object3d_add(scene, dust);
 object3d_add(scene, laser);
 object3d_add(scene, explosion);
 object3d_add(scene, cpu);
+object3d_add(scene, healthBar);
 
 c.width = window.innerWidth;
 c.height = window.innerHeight;
@@ -277,6 +282,13 @@ function update(time) {
     });
 
     var collisions = physics_update(physics_bodies(scene));
+
+    collisions.hit.map(function(hit) {
+      if (hit.health > 0) {
+        hit.health--;
+      }
+    });
+
     collisions.removed.map(function(body) {
       if (body.physics === BODY_BULLET) {
         var explosion = explosion_create(15);
@@ -363,7 +375,7 @@ function render(time) {
   });
 
   object3d_traverse(scene, function(object) {
-    if (object.geometry && object.material) {
+    if (object.visible && object.geometry && object.material) {
       renderMesh(object);
     }
   });
