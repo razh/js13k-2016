@@ -27,6 +27,7 @@ import {
 } from './shader';
 import {
   vec3_create,
+  vec3_clone,
   vec3_multiplyScalar,
   vec3_setFromMatrixPosition,
   vec3_set,
@@ -321,7 +322,7 @@ function fireLaser() {
   Object.assign(laser.position, camera.position);
   Object.assign(laser.quaternion, camera.quaternion);
 
-  var position = Object.assign(vec3_create(), laser.position);
+  var position = vec3_clone(laser.position);
   vec3_applyQuaternion(Object.assign(_vec3, vec3_X), laser.quaternion);
   object3d_translateX(laser, laserCount % 2 ? -0.3 : 0.3);
 

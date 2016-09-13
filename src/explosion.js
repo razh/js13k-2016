@@ -4,6 +4,7 @@ import { mesh_create } from './mesh';
 import { object3d_create, object3d_add, object3d_remove } from './object3d';
 import {
   vec3_create,
+  vec3_clone,
   vec3_set,
   vec3_add,
   vec3_length,
@@ -53,8 +54,8 @@ export function explosion_create(count) {
     object3d_add(explosion, sprite);
     velocities.push(
       vec3_multiplyScalar(
-        vec3_normalize(Object.assign(vec3_create(), sprite.position)),
-       randFloat(1.5, 4)
+        vec3_normalize(vec3_clone(sprite.position)),
+        randFloat(1.5, 4)
       )
     );
   }
