@@ -1,5 +1,5 @@
 import { boxGeom_create } from './boxGeom';
-import { geom_merge, geom_flipFaces, translate, scale } from './geom';
+import { geom_merge, translate, scale } from './geom';
 import { material_create } from './material';
 import { mesh_create } from './mesh';
 import { object3d_create, object3d_add } from './object3d';
@@ -52,7 +52,7 @@ var leftLegTranslate = translate(-0.15, 0, 0);
 
 var legsGeometry = geom_merge(
   rightLegTranslate(createLegGeometry()),
-  leftLegTranslate(geom_flipFaces(scale(-1, 1, 1)(createLegGeometry())))
+  leftLegTranslate(scale(-1, 1, -1)(createLegGeometry()))
 );
 
 var outerLegsRotation = vec3_create();

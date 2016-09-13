@@ -94,15 +94,3 @@ export function geom_merge(a, b) {
 
   return a;
 }
-
-export function geom_flipFaces(geom) {
-  for (var i = 0; i < geom.faces.length; i++) {
-    var face = geom.faces[i];
-
-    var b = face.b;
-    face.b = face.c;
-    face.c = b;
-  }
-
-  return geom;
-}
