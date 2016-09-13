@@ -6,6 +6,7 @@ import { material_create } from './material';
 import { object3d_create, object3d_add } from './object3d';
 import { vec3_set } from './vec3';
 import { align } from './boxAlign';
+import { colors, defaultColors } from './boxColors';
 import { translateVertices } from './boxTransform';
 import { BODY_STATIC, physics_create } from './physics';
 import { compose } from './utils';
@@ -35,7 +36,13 @@ var cpuBevel = 0.4;
 
 var chipGeometry = geom_merge(
   // Bottom.
-  align('ny')(boxGeom_create(cpuSize, cpuBottomHeight, cpuSize)),
+  compose(
+    align('ny'),
+    defaultColors([1, 1, 1]),
+    colors({
+      ny: [0.5, 0.5, 0.5],
+    })
+  )(boxGeom_create(cpuSize, cpuBottomHeight, cpuSize)),
 
   // Top.
   compose(
@@ -122,7 +129,7 @@ export function cpu_create() {
 
   var chipMaterial = material_create();
   vec3_set(chipMaterial.color, 0.5, 0.5, 0.5);
-  chipMaterial.shininess = 10;
+  chipMaterial.shininess = 5;
   var pinsMaterial = material_create();
   vec3_set(pinsMaterial.emissive, 0.1, 0.1, 0.1);
   vec3_set(pinsMaterial.specular, 1, 1, 1);
