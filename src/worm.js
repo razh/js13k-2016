@@ -2,9 +2,9 @@ import { boxGeom_create } from './boxGeom';
 import { geom_merge } from './geom';
 import { material_create } from './material';
 import { mesh_create } from './mesh';
-import { object3d_create, object3d_add } from './object3d';
-import { quat_setFromEuler } from './quat';
-import { vec3_create, vec3_set } from './vec3';
+import { object3d_create, object3d_add, object3d_rotateZ } from './object3d';
+import { vec3_set } from './vec3';
+import { BODY_STATIC, physics_create } from './physics';
 import { align } from './boxAlign';
 import { scaleVertices } from './boxTransform';
 import { compose } from './utils';
@@ -34,8 +34,9 @@ export function worm_create(count, width, height, depth, separation) {
 
   for (var i = 0; i < count; i++) {
     var mesh = mesh_create(geometry, material);
+    physics_create(mesh, BODY_STATIC);
     mesh.position.z = (depth / 2) + (depth + separation) * i;
-    quat_setFromEuler(mesh.quaternion, vec3_create(0, 0, Math.PI / 4));
+    object3d_rotateZ(mesh, Math.PI / 4);
     object3d_add(worm, mesh);
   }
 
