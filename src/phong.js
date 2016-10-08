@@ -166,6 +166,8 @@ export function frag(directionalLightCount) {
 
       'vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + emissive;' +
 
+      'gl_FragColor = vec4(outgoingLight, 1.0);' +
+
       'float depth = gl_FragCoord.z / gl_FragCoord.w;' +
       'float fogFactor = smoothstep(fogNear, fogFar, depth);' +
       'gl_FragColor.rgb = mix(outgoingLight, fogColor, fogFactor);' +
