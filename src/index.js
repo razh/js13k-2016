@@ -1,10 +1,10 @@
 /* global _c, _r, _t */
 
-import { bufferGeom_create, bufferGeom_fromGeom } from './bufferGeom';
-import { box3_create } from './box3';
-import { camera_create, camera_lookAt, camera_updateProjectionMatrix } from './camera';
-import { directionalLight_create } from './directionalLight';
-import { mat4_getInverse, mat4_multiplyMatrices } from './mat4';
+import { bufferGeom_create, bufferGeom_fromGeom } from './bufferGeom.js';
+import { box3_create } from './box3.js';
+import { camera_create, camera_lookAt, camera_updateProjectionMatrix } from './camera.js';
+import { directionalLight_create } from './directionalLight.js';
+import { mat4_getInverse, mat4_multiplyMatrices } from './mat4.js';
 import {
   object3d_create,
   object3d_add,
@@ -14,7 +14,7 @@ import {
   object3d_translateZ,
   object3d_traverse,
   object3d_updateMatrixWorld,
-} from './object3d';
+} from './object3d.js';
 import {
   createShaderProgram,
   createFloat32Buffer,
@@ -24,7 +24,7 @@ import {
   setVec3Uniform,
   getAttributeLocations,
   getUniformLocations,
-} from './shader';
+} from './shader.js';
 import {
   vec3_create,
   vec3_clone,
@@ -37,32 +37,32 @@ import {
   vec3_applyQuaternion,
   vec3_distanceTo,
   vec3_X,
-} from './vec3';
-import { laser_create } from './laser';
-import { keys_create } from './keys';
-import { controls_create } from './controls';
-import { pointerLock_create } from './pointerLock';
-import { tween_update } from './tween';
-import { dust_create } from './dust';
-import { cpu_create, CPU_HEALTH } from './cpu';
-import { healthBar_create } from './healthBar';
-import { explosion_create } from './explosion';
-import { shake_create } from './shake';
+} from './vec3.js';
+import { laser_create } from './laser.js';
+import { keys_create } from './keys.js';
+import { controls_create } from './controls.js';
+import { pointerLock_create } from './pointerLock.js';
+import { tween_update } from './tween.js';
+import { dust_create } from './dust.js';
+import { cpu_create, CPU_HEALTH } from './cpu.js';
+import { healthBar_create } from './healthBar.js';
+import { explosion_create } from './explosion.js';
+import { shake_create } from './shake.js';
 import {
   BODY_DYNAMIC,
   BODY_BULLET,
   physics_create,
   physics_bodies,
   physics_update,
-} from './physics';
-import { playDrums, playLaser, playExplosion } from './audio';
-import { clamp } from './math';
-import { uniq } from './utils';
-import { create_test, create_map0 } from './maps';
+} from './physics.js';
+import { playDrums, playLaser, playExplosion } from './audio.js';
+import { clamp } from './math.js';
+import { uniq } from './utils.js';
+import { create_test, create_map0 } from './maps.js';
 
 // import vs from './shaders/phong_vert.glsl';
 // import fs from './shaders/phong_frag.glsl';
-import { vert, frag } from './phong';
+import { vert, frag } from './phong.js';
 
 var _vec3 = vec3_create();
 

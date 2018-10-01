@@ -6,15 +6,15 @@ import {
   box3_intersectsBox,
   box3_setFromObject,
   box3_translate,
-} from './box3';
-import { object3d_traverse } from './object3d';
+} from './box3.js';
+import { object3d_traverse } from './object3d.js';
 import {
   vec3_create,
   vec3_set,
   vec3_add,
   vec3_sub,
   vec3_multiplyScalar,
-} from './vec3';
+} from './vec3.js';
 
 export var BODY_STATIC = 1;
 export var BODY_DYNAMIC = 2;

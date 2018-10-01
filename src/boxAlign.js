@@ -1,7 +1,7 @@
-import boxVertexIndices from './boxVertexIndices';
-import { vec3_create, vec3_add, vec3_divideScalar, vec3_set } from './vec3';
-import { geom_translate } from './geom';
-import { rearg } from './utils';
+import boxVertexIndices from './boxVertexIndices.js';
+import { vec3_create, vec3_add, vec3_divideScalar, vec3_set } from './vec3.js';
+import { geom_translate } from './geom.js';
+import { rearg } from './utils.js';
 
 var centroid = vec3_create();
 

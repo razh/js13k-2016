@@ -1,4 +1,4 @@
-import { object3d_traverse, object3d_updateMatrixWorld } from './object3d';
+import { object3d_traverse, object3d_updateMatrixWorld } from './object3d.js';
 import {
   vec3_create,
   vec3_add,
@@ -7,7 +7,7 @@ import {
   vec3_max,
   vec3_multiplyScalar,
   vec3_applyMatrix4,
-} from './vec3';
+} from './vec3.js';
 
 export function box3_create(min, max) {
   return {

@@ -1,12 +1,12 @@
-import boxVertexIndices from './boxVertexIndices';
+import boxVertexIndices from './boxVertexIndices.js';
 import {
   vec3_create,
   vec3_add,
   vec3_multiply,
   vec3_fromArray,
   vec3_setScalar,
-} from './vec3';
-import { rearg } from './utils';
+} from './vec3.js';
+import { rearg } from './utils.js';
 
 function transformBoxVertices(method) {
   var vector = vec3_create();

@@ -1,14 +1,14 @@
-import { boxGeom_create } from './boxGeom';
-import { geom_clone, geom_merge, translate, scale } from './geom';
-import { material_create } from './material';
-import { mesh_create } from './mesh';
-import { object3d_create, object3d_add } from './object3d';
-import { quat_setFromEuler } from './quat';
-import { vec3_create, vec3_set } from './vec3';
-import { BODY_DYNAMIC, physics_create } from './physics';
-import { colors, defaultColors } from './boxColors';
-import { translateVertices, scaleVertices } from './boxTransform';
-import { compose } from './utils';
+import { boxGeom_create } from './boxGeom.js';
+import { geom_clone, geom_merge, translate, scale } from './geom.js';
+import { material_create } from './material.js';
+import { mesh_create } from './mesh.js';
+import { object3d_create, object3d_add } from './object3d.js';
+import { quat_setFromEuler } from './quat.js';
+import { vec3_create, vec3_set } from './vec3.js';
+import { BODY_DYNAMIC, physics_create } from './physics.js';
+import { colors, defaultColors } from './boxColors.js';
+import { translateVertices, scaleVertices } from './boxTransform.js';
+import { compose } from './utils.js';
 
 var legGeometry = geom_merge(
   // Thigh geometry.

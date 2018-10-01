@@ -1,6 +1,6 @@
-import { boxGeom_create } from './boxGeom';
-import { material_create } from './material';
-import { mesh_create } from './mesh';
+import { boxGeom_create } from './boxGeom.js';
+import { material_create } from './material.js';
+import { mesh_create } from './mesh.js';
 
 export function laser_create(color) {
   var laserMaterial = material_create();

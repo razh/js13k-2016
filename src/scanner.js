@@ -1,15 +1,15 @@
-import { boxGeom_create } from './boxGeom';
-import { geom_merge, translate } from './geom';
-import { material_create } from './material';
-import { mesh_create } from './mesh';
-import { object3d_create, object3d_add } from './object3d';
-import { quat_setFromEuler } from './quat';
-import{ vec3_create, vec3_set } from './vec3';
-import { BODY_DYNAMIC, physics_create } from './physics';
-import { align } from './boxAlign';
-import { colors, defaultColors } from './boxColors';
-import { translateVertices } from './boxTransform';
-import { compose } from './utils';
+import { boxGeom_create } from './boxGeom.js';
+import { geom_merge, translate } from './geom.js';
+import { material_create } from './material.js';
+import { mesh_create } from './mesh.js';
+import { object3d_create, object3d_add } from './object3d.js';
+import { quat_setFromEuler } from './quat.js';
+import{ vec3_create, vec3_set } from './vec3.js';
+import { BODY_DYNAMIC, physics_create } from './physics.js';
+import { align } from './boxAlign.js';
+import { colors, defaultColors } from './boxColors.js';
+import { translateVertices } from './boxTransform.js';
+import { compose } from './utils.js';
 
 var armGeometry = geom_merge(
   compose(

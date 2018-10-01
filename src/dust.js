@@ -1,9 +1,9 @@
-import { boxGeom_create } from './boxGeom';
-import { object3d_create, object3d_add } from './object3d';
-import { material_create } from './material';
-import { mesh_create } from './mesh';
-import { vec3_set } from './vec3';
-import { randFloat } from './math';
+import { boxGeom_create } from './boxGeom.js';
+import { object3d_create, object3d_add } from './object3d.js';
+import { material_create } from './material.js';
+import { mesh_create } from './mesh.js';
+import { vec3_set } from './vec3.js';
+import { randFloat } from './math.js';
 
 var geometry = boxGeom_create(1, 1, 1);
 var material = material_create();

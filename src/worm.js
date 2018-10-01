@@ -1,13 +1,13 @@
-import { boxGeom_create } from './boxGeom';
-import { geom_merge } from './geom';
-import { material_create } from './material';
-import { mesh_create } from './mesh';
-import { object3d_create, object3d_add, object3d_rotateZ } from './object3d';
-import { vec3_set } from './vec3';
-import { BODY_STATIC, physics_create } from './physics';
-import { align } from './boxAlign';
-import { scaleVertices } from './boxTransform';
-import { compose } from './utils';
+import { boxGeom_create } from './boxGeom.js';
+import { geom_merge } from './geom.js';
+import { material_create } from './material.js';
+import { mesh_create } from './mesh.js';
+import { object3d_create, object3d_add, object3d_rotateZ } from './object3d.js';
+import { vec3_set } from './vec3.js';
+import { BODY_STATIC, physics_create } from './physics.js';
+import { align } from './boxAlign.js';
+import { scaleVertices } from './boxTransform.js';
+import { compose } from './utils.js';
 
 export function worm_create(count, width, height, depth, separation) {
   var worm = object3d_create();

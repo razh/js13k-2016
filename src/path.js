@@ -1,10 +1,10 @@
-import { object3d_lookAt } from './object3d';
+import { object3d_lookAt } from './object3d.js';
 import {
   vec3_create,
   vec3_fromArray,
   vec3_distanceTo,
-} from './vec3';
-import { tween_create, tween_cancel } from './tween';
+} from './vec3.js';
+import { tween_create, tween_cancel } from './tween.js';
 
 export function path_create(object, points, options, callback) {
   vec3_fromArray(object.position, points[0]);

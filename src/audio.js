@@ -1,4 +1,4 @@
-import { randFloatSpread, sample } from './math';
+import { randFloatSpread, sample } from './math.js';
 
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var OfflineAudioContext = window.OfflineAudioContext || window.webkitOfflineAudioContext;

@@ -1,5 +1,5 @@
-import { object3d_create } from './object3d';
-import { vec3_create, vec3_Y } from './vec3';
+import { object3d_create } from './object3d.js';
+import { vec3_create, vec3_Y } from './vec3.js';
 
 export function directionalLight_create(color, intensity) {
   var light = Object.assign(

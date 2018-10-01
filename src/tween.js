@@ -1,5 +1,5 @@
-import { easing_linear } from './easings';
-import { removeIndices, remove } from './utils';
+import { easing_linear } from './easings.js';
+import { removeIndices, remove } from './utils.js';
 
 var tweens = [];
 

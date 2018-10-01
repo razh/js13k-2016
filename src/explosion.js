@@ -1,7 +1,7 @@
-import { boxGeom_create } from './boxGeom';
-import { material_create } from './material';
-import { mesh_create } from './mesh';
-import { object3d_create, object3d_add, object3d_remove } from './object3d';
+import { boxGeom_create } from './boxGeom.js';
+import { material_create } from './material.js';
+import { mesh_create } from './mesh.js';
+import { object3d_create, object3d_add, object3d_remove } from './object3d.js';
 import {
   vec3_create,
   vec3_clone,
@@ -11,8 +11,8 @@ import {
   vec3_multiplyScalar,
   vec3_normalize,
   vec3_fromArray,
-} from './vec3';
-import { randFloat, randFloatSpread, sample } from './math';
+} from './vec3.js';
+import { randFloat, randFloatSpread, sample } from './math.js';
 
 var EPSILON = 1e-2;
 

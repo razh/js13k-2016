@@ -1,4 +1,4 @@
-import { vec3_create, vec3_clone } from './vec3';
+import { vec3_create, vec3_clone } from './vec3.js';
 
 export function face3_create(a, b, c) {
   return {

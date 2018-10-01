@@ -1,6 +1,6 @@
-import { face3_create, face3_clone } from './face3';
-import { vec3_create, vec3_clone, vec3_add, vec3_multiply, vec3_set } from './vec3';
-import { rearg3f } from './utils';
+import { face3_create, face3_clone } from './face3.js';
+import { vec3_create, vec3_clone, vec3_add, vec3_multiply, vec3_set } from './vec3.js';
+import { rearg3f } from './utils.js';
 
 export function geom_create() {
   return {

@@ -1,6 +1,6 @@
-import boxVertexIndices from './boxVertexIndices';
-import { vec3_create, vec3_fromArray } from './vec3';
-import { rearg } from './utils';
+import boxVertexIndices from './boxVertexIndices.js';
+import { vec3_create, vec3_fromArray } from './vec3.js';
+import { rearg } from './utils.js';
 
 export function setFaceVertexColor(face, index, color) {
   if (face.a === index) {

@@ -1,6 +1,6 @@
-import { vec3_set } from './vec3';
-import { tween_create } from './tween';
-import { randFloatSpread } from './math';
+import { vec3_set } from './vec3.js';
+import { tween_create } from './tween.js';
+import { randFloatSpread } from './math.js';
 
 export function shake_create(object, magnitude) {
   var shake = {

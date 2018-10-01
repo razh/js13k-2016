@@ -1,6 +1,6 @@
-import { geom_create, geom_push } from './geom';
-import { vec3_create, vec3_fromArray } from './vec3';
-import { setFaceVertexColor } from './boxColors';
+import { geom_create, geom_push } from './geom.js';
+import { vec3_create, vec3_fromArray } from './vec3.js';
+import { setFaceVertexColor } from './boxColors.js';
 
 export function cylinderGeom_create(
   radiusTop,

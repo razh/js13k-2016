@@ -1,14 +1,14 @@
-import { boxGeom_create } from './boxGeom';
-import { geom_create, geom_clone, geom_merge, translate } from './geom';
-import { mesh_create } from './mesh';
-import { material_create } from './material';
-import { object3d_create, object3d_add } from './object3d';
-import { vec3_set } from './vec3';
-import { align } from './boxAlign';
-import { colors, defaultColors } from './boxColors';
-import { translateVertices } from './boxTransform';
-import { BODY_STATIC, physics_create } from './physics';
-import { compose } from './utils';
+import { boxGeom_create } from './boxGeom.js';
+import { geom_create, geom_clone, geom_merge, translate } from './geom.js';
+import { mesh_create } from './mesh.js';
+import { material_create } from './material.js';
+import { object3d_create, object3d_add } from './object3d.js';
+import { vec3_set } from './vec3.js';
+import { align } from './boxAlign.js';
+import { colors, defaultColors } from './boxColors.js';
+import { translateVertices } from './boxTransform.js';
+import { BODY_STATIC, physics_create } from './physics.js';
+import { compose } from './utils.js';
 
 export var CPU_HEALTH = 20;
 
